@@ -21,10 +21,96 @@ model account {
   login String @unique
   password String
   role roles
+
+  events account_event[]
 }
 
 enum roles {
   DIRECTOR
   EDITOR
   ADMIN
+}
+
+model season {
+  id Int @id @default(autoincrement())
+  year Int
+
+  event event[]
+}
+
+model event {
+  id Int @id @default(autoincrement()) 
+  name String
+  date DateTime
+  place String
+  description String
+  photo String
+
+
+  accounts account_event[]
+  team team_event[]
+  contest event_contest[]
+
+  season season? @relation(fields: [season_id], references: [id]) 
+  season_id Int?
+}
+
+model contest {
+  id Int @id @default(autoincrement())
+  name String
+  duration DateTime @db.Time()
+  description String
+
+  event event_contest[]
+}
+
+
+model team {
+  id Int @id @default(autoincrement())
+  name String
+  achievments String? 
+  home String
+  rate Int?
+  active Boolean
+
+  member member[]
+  events team_event[]
+}
+
+model member {
+  id String @id @default(uuid())
+  name String
+  phone String
+  photo String
+
+  team team @relation(fields: [team_id], references: [id])
+  team_id Int
+}
+
+model account_event {
+  account account @relation(fields: [account_id], references: [id])
+  account_id String
+  event event @relation(fields: [event_id], references: [id])
+  event_id Int
+
+  @@id([account_id, event_id])
+}
+
+model team_event{
+  team team @relation(fields: [team_id], references: [id])
+  team_id Int
+  event event @relation(fields: [event_id], references: [id])
+  event_id Int
+  team_rate Float
+
+  @@id([team_id, event_id])
+}
+
+model event_contest {
+  event event @relation(fields: [event_id], references: [id])
+  event_id Int
+  contest contest @relation(fields: [contest_id], references: [id])
+  contest_id Int
+
+  @@id([event_id, contest_id])
 }
