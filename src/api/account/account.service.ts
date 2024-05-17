@@ -3,6 +3,7 @@ import { PrismaService } from 'src/database/prisma.service';
 import { CreateAccountInput } from './dto/create-account.input';
 import { Account } from './account.entity';
 import { AccountExistError } from 'src/errors/account-exist.error';
+import { encodePassword } from 'src/utils/bcrypt';
 
 @Injectable()
 export class AccountService {
@@ -12,9 +13,11 @@ export class AccountService {
     createAccountInput: CreateAccountInput,
   ): Promise<Account> {
     try {
+      const password = await encodePassword(createAccountInput.password);
       return await this.prisma.account.create({
         data: {
           ...createAccountInput,
+          password,
         },
       });
     } catch (error) {
