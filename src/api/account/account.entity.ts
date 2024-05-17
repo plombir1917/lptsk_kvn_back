@@ -2,7 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { $Enums } from '@prisma/client';
 
 @ObjectType()
-export class AccountEntity {
+export class Account {
   @Field(() => String)
   id: string;
 
@@ -21,6 +21,6 @@ export class AccountEntity {
   @Field(() => String)
   password: string;
 
-  @Field(() => $Enums.roles)
+  @Field(() => String)
   role: $Enums.roles;
 }

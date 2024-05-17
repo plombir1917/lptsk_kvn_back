@@ -3,7 +3,8 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from 'src/database/prisma.module';
-import { AccountModule } from './account/account.module';
+import { AccountModule } from './api/account/account.module';
+import { ApiModule } from './api/api.module';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { AccountModule } from './account/account.module';
       autoSchemaFile: true,
     }),
     PrismaModule,
-    AccountModule,
+    ApiModule,
   ],
 })
 export class AppModule {}
