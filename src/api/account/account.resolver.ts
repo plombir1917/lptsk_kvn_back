@@ -2,18 +2,12 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Account } from './account.entity';
 import { CreateAccountInput } from './dto/create-account.input';
 import { AccountService } from './account.service';
-import {
-  BadRequestException,
-  NotFoundException,
-  UsePipes,
-  ValidationPipe,
-} from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 @Resolver('Account')
 export class AccountResolver {
   constructor(private readonly accountService: AccountService) {}
 
-  @UsePipes(new ValidationPipe())
   @Mutation(() => Account)
   async createAccount(@Args('input') input: CreateAccountInput) {
     try {
