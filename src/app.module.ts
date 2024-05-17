@@ -3,8 +3,8 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from 'src/database/prisma.module';
-import { AccountModule } from './api/account/account.module';
 import { ApiModule } from './api/api.module';
+import { GraphQLError, GraphQLFormattedError } from 'graphql';
 
 @Module({
   imports: [
@@ -14,6 +14,18 @@ import { ApiModule } from './api/api.module';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: true,
+      formatError: (error: GraphQLError) => {
+        const formattedError: GraphQLFormattedError = {
+          message: error.message,
+
+          extensions: {
+            ...error.extensions,
+          },
+        };
+        delete formattedError.extensions.stacktrace;
+
+        return formattedError;
+      },
     }),
     PrismaModule,
     ApiModule,
