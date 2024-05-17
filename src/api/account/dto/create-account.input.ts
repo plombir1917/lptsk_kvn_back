@@ -3,6 +3,7 @@ import { $Enums } from '@prisma/client';
 import {
   IsNotEmpty,
   IsOptional,
+  IsPhoneNumber,
   IsString,
   IsStrongPassword,
 } from 'class-validator';
@@ -20,8 +21,8 @@ export class CreateAccountInput {
   surname: string;
 
   @Field({ nullable: true })
+  @IsPhoneNumber('RU')
   @IsOptional()
-  @IsString()
   phone?: string;
 
   @Field()
@@ -33,5 +34,6 @@ export class CreateAccountInput {
   password: string;
 
   @Field()
+  @IsString()
   role: $Enums.roles;
 }
