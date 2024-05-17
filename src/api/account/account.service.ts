@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
 import { CreateAccountInput } from './dto/create-account.input';
 import { Account } from './account.entity';
+import { AccountExistError } from 'src/errors/account-exist.error';
 
 @Injectable()
 export class AccountService {
@@ -10,11 +11,20 @@ export class AccountService {
   async createAccount(
     createAccountInput: CreateAccountInput,
   ): Promise<Account> {
-    return await this.prisma.account.create({
-      data: {
-        ...createAccountInput,
-      },
-    });
+    try {
+      return await this.prisma.account.create({
+        data: {
+          ...createAccountInput,
+        },
+      });
+    } catch (error) {
+      switch (error.code) {
+        case 'P2002':
+          throw new AccountExistError(createAccountInput.login);
+        default:
+          throw error;
+      }
+    }
   }
 
   async getAccountById(id: string): Promise<Account> {

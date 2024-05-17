@@ -19,8 +19,7 @@ export class AccountResolver {
     try {
       return await this.accountService.createAccount(input);
     } catch (error) {
-      console.log(error);
-      throw new BadRequestException('Invalid data!');
+      throw new BadRequestException(error.message);
     }
   }
 
