@@ -1,4 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
+import { $Enums } from '@prisma/client';
 import {
   IsNotEmpty,
   IsOptional,
@@ -32,5 +33,5 @@ export class CreateAccountInput {
   password: string;
 
   @Field()
-  role: string;
+  role: $Enums.roles;
 }
