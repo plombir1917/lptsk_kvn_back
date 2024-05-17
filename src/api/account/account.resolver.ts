@@ -1,5 +1,4 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { PrismaService } from 'src/database/prisma.service';
 import { Account } from './account.entity';
 import { CreateAccountInput } from './dto/create-account.input';
 import { AccountService } from './account.service';
