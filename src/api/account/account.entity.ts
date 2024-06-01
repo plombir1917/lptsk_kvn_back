@@ -23,4 +23,7 @@ export class Account {
 
   @Field(() => String)
   role: $Enums.roles;
+
+  @Field(() => String)
+  photo: string;
 }

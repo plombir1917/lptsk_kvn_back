@@ -34,6 +34,10 @@ export class CreateAccountInput {
   password: string;
 
   @Field()
+  @IsNotEmpty()
+  photo: string;
+
+  @Field()
   @IsString()
   role: $Enums.roles;
 }
