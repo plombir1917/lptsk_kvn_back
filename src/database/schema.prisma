@@ -20,6 +20,7 @@ model account {
   phone String?
   login String @unique
   password String
+  photo String
   role roles
 
   events account_event[]
@@ -27,8 +28,9 @@ model account {
 
 model season {
   id Int @id @default(autoincrement())
-  year Int
+  year DateTime
 
+  news news[]
   events event[]
 }
 
@@ -39,6 +41,7 @@ model event {
   place String
   description String
   photo String
+  link String
 
   tickets ticket[]
   accounts account_event[]
@@ -65,6 +68,7 @@ model team {
   home String
   rate Int?
   active Boolean
+  photo String
 
   members member[]
   events team_event[]
@@ -80,10 +84,20 @@ model member {
   team_id Int
 }
 
+model news {
+  id Int @id @default(autoincrement())
+  title String
+  link String
+  photo String
+
+  season season @relation(fields: [season_id], references: [id])
+  season_id Int
+}
+
 model ticket {
   id Int @id @default(autoincrement())
   price Int
-  is_free Boolean
+  link String
 
   event event @relation(fields: [event_id], references: [id])
   event_id Int
@@ -94,6 +108,7 @@ model account_event {
   account_id String
   event event @relation(fields: [event_id], references: [id])
   event_id Int
+  responsibility String
 
   @@id([account_id, event_id])
 }
