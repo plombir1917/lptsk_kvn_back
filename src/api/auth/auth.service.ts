@@ -37,4 +37,8 @@ export class AuthService {
       access_token: this.jwtService.sign({ id: data.id, role: data.role }),
     };
   }
+
+  async decodeToken(token: string) {
+    return this.jwtService.decode(token);
+  }
 }

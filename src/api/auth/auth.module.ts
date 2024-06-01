@@ -14,5 +14,6 @@ import { AuthResolver } from './auth.resolver';
   ],
   controllers: [],
   providers: [AuthService, PrismaService, AuthResolver],
+  exports: [AuthService],
 })
 export class AuthModule {}
