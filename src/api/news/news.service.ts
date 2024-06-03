@@ -1,15 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { CreateNewsInput } from './dto/create-news.input';
 import { UpdateNewsInput } from './dto/update-news.input';
+import { PrismaService } from 'src/database/prisma.service';
 
 @Injectable()
 export class NewsService {
+  constructor(private readonly prisma: PrismaService) {}
   create(createNewsInput: CreateNewsInput) {
-    return 'This action adds a new news';
+    return this.prisma.news.create({ data: createNewsInput });
   }
 
   findAll() {
-    return `This action returns all news`;
+    return this.prisma.news.findMany();
   }
 
   findOne(id: number) {

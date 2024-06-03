@@ -18,7 +18,7 @@ export class NewsResolver {
     return this.newsService.findAll();
   }
 
-  @Query(() => News, { name: 'news' })
+  @Query(() => News, { name: 'new' })
   findOne(@Args('id', { type: () => Int }) id: number) {
     return this.newsService.findOne(id);
   }
