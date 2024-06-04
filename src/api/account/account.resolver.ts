@@ -5,6 +5,7 @@ import { AccountService } from './account.service';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { User } from '../auth/decorators/user.decorator';
 import { AuthService } from '../auth/auth.service';
+import { Roles } from '../auth/decorators/roles.decorator';
 
 @Resolver('Account')
 export class AccountResolver {
@@ -13,6 +14,7 @@ export class AccountResolver {
     private readonly authService: AuthService,
   ) {}
 
+  @Roles('DIRECTOR')
   @Mutation(() => Account)
   async createAccount(@Args('input') input: CreateAccountInput) {
     try {
