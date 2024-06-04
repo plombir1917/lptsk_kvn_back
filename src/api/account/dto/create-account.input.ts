@@ -7,6 +7,8 @@ import {
   IsString,
   IsStrongPassword,
 } from 'class-validator';
+import * as GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
+import { FileUpload } from 'src/upload/file-upload.interface';
 
 @InputType()
 export class CreateAccountInput {
@@ -33,9 +35,9 @@ export class CreateAccountInput {
   @IsStrongPassword()
   password: string;
 
-  @Field()
+  @Field(() => GraphQLUpload)
   @IsNotEmpty()
-  photo: string;
+  photo: Promise<FileUpload>;
 
   @Field()
   @IsString()

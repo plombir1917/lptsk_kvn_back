@@ -41,7 +41,6 @@ export class RolesGuard {
       const user = this.jwtService.verify(token);
       req.user = user;
       const role = user.role;
-      console.log(role);
       return !!requieredRoles.includes(role);
     } catch (e) {
       throw new UnauthorizedException('Пользователь не авторизован');

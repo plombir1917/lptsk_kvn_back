@@ -6,6 +6,7 @@ import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { User } from '../auth/decorators/user.decorator';
 import { AuthService } from '../auth/auth.service';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { UpdateAccountInput } from './dto/update-account.input';
 
 @Resolver('Account')
 export class AccountResolver {
@@ -46,5 +47,20 @@ export class AccountResolver {
   @Query(() => [Account])
   async getAccounts() {
     return await this.accountService.getAccounts();
+  }
+
+  @Roles('DIRECTOR')
+  @Mutation(() => Account)
+  async updateAccount(
+    @Args('id') id: string,
+    @Args('input') input: UpdateAccountInput,
+  ) {
+    return await this.accountService.updateAccount(id, input);
+  }
+
+  @Roles('DIRECTOR')
+  @Mutation(() => Account)
+  async deleteAccount(@Args('id') id: string) {
+    return await this.accountService.deleteAccount(id);
   }
 }
