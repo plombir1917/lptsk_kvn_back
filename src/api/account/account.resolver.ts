@@ -25,6 +25,7 @@ export class AccountResolver {
     }
   }
 
+  @Roles('DIRECTOR', 'EDITOR', 'ADMIN')
   @Query(() => Account)
   async getAccountById(@Args('id') id: string) {
     try {
@@ -34,6 +35,7 @@ export class AccountResolver {
     }
   }
 
+  @Roles('DIRECTOR', 'EDITOR', 'ADMIN')
   @Query(() => Account)
   async getAccountByToken(@User() token: string) {
     try {
@@ -44,12 +46,12 @@ export class AccountResolver {
     }
   }
 
+  @Roles('DIRECTOR')
   @Query(() => [Account])
   async getAccounts() {
     return await this.accountService.getAccounts();
   }
 
-  @Roles('DIRECTOR')
   @Mutation(() => Account)
   async updateAccount(
     @Args('id') id: string,

@@ -62,27 +62,45 @@ export class AccountService {
     id: string,
     account: Partial<CreateAccountInput>,
   ): Promise<Account> {
-    const password = await encodePassword(account.password);
-    const { createReadStream, filename } = await account.photo;
+    //если пароль изменяется
+    if (account.password)
+      account.password = await encodePassword(account.password);
 
-    const writeStream = createWriteStream(
-      join(process.cwd(), `./src/upload/${filename}`),
-    );
+    //если фото изменяется
+    if (account.photo) {
+      const { createReadStream, filename } = await account.photo;
 
-    createReadStream().pipe(writeStream);
+      const writeStream = createWriteStream(
+        join(process.cwd(), `./src/upload/${filename}`),
+      );
 
-    try {
-      await new Promise((resolve) => writeStream.on('finish', resolve));
-    } catch (error) {
-      throw new BadRequestException('Could not save image');
+      createReadStream().pipe(writeStream);
+      try {
+        await new Promise((resolve) => writeStream.on('finish', resolve));
+        return await this.prisma.account.update({
+          where: {
+            id,
+          },
+          data: {
+            ...account,
+            photo: filename,
+          },
+        });
+      } catch (error) {
+        throw new BadRequestException('Could not save image');
+      }
     }
+
     return await this.prisma.account.update({
       where: {
         id,
       },
       data: {
-        ...account,
-        photo: filename,
+        login: account.login,
+        role: account.role,
+        name: account.name,
+        surname: account.surname,
+        phone: account.phone,
       },
     });
   }
