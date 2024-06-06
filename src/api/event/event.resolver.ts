@@ -9,27 +9,30 @@ export class EventResolver {
   constructor(private readonly eventService: EventService) {}
 
   @Mutation(() => Event)
-  createEvent(@Args('createEventInput') createEventInput: CreateEventInput) {
+  createEvent(@Args('input') createEventInput: CreateEventInput) {
     return this.eventService.create(createEventInput);
   }
 
-  @Query(() => [Event], { name: 'event' })
-  findAll() {
+  @Query(() => [Event])
+  getEvents() {
     return this.eventService.findAll();
   }
 
-  @Query(() => Event, { name: 'event' })
+  @Query(() => Event)
   findOne(@Args('id', { type: () => Int }) id: number) {
     return this.eventService.findOne(id);
   }
 
   @Mutation(() => Event)
-  updateEvent(@Args('updateEventInput') updateEventInput: UpdateEventInput) {
-    return this.eventService.update(updateEventInput.id, updateEventInput);
+  updateEvent(
+    @Args('id') id: string,
+    @Args('input') updateEventInput: UpdateEventInput,
+  ) {
+    return this.eventService.update(+id, updateEventInput);
   }
 
   @Mutation(() => Event)
-  removeEvent(@Args('id', { type: () => Int }) id: number) {
-    return this.eventService.remove(id);
+  deleteEvent(@Args('id') id: string) {
+    return this.eventService.delete(+id);
   }
 }
