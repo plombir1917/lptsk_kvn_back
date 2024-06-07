@@ -6,10 +6,14 @@ import { AccountExistError } from 'src/errors/account-exist.error';
 import { encodePassword } from 'src/utils/bcrypt';
 import { createWriteStream } from 'fs';
 import { join } from 'path';
+import { MinioService } from 'src/utils/minio/minio.service';
 
 @Injectable()
 export class AccountService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly minio: MinioService,
+  ) {}
 
   async createAccount(
     createAccountInput: CreateAccountInput,
@@ -23,12 +27,19 @@ export class AccountService {
       );
 
       createReadStream().pipe(writeStream);
+      await this.minio.createBucketIfNotExist();
+      console.log('after bucket');
+      const minioFileSave = await this.minio.uploadFile(
+        filename,
+        `./src/upload/${filename}`,
+      );
+      console.log('after file');
 
-      try {
-        await new Promise((resolve) => writeStream.on('finish', resolve));
-      } catch (error) {
+      if (!minioFileSave) {
         throw new BadRequestException('Could not save image');
       }
+      console.log('after bucket');
+
       return await this.prisma.account.create({
         data: {
           ...createAccountInput,
@@ -77,6 +88,7 @@ export class AccountService {
       createReadStream().pipe(writeStream);
       try {
         await new Promise((resolve) => writeStream.on('finish', resolve));
+
         return await this.prisma.account.update({
           where: {
             id,

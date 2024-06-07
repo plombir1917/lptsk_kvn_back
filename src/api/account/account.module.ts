@@ -4,10 +4,10 @@ import { PrismaModule } from 'src/database/prisma.module';
 import { PrismaService } from 'src/database/prisma.service';
 import { AccountService } from './account.service';
 import { AuthModule } from '../auth/auth.module';
-import { AuthService } from '../auth/auth.service';
+import { MinioModule } from 'src/utils/minio/minio.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule],
-  providers: [AccountResolver, AccountService, PrismaService],
+  imports: [PrismaModule, AuthModule, MinioModule],
+  providers: [AccountResolver, AccountService],
 })
 export class AccountModule {}
