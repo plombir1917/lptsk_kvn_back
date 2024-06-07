@@ -44,7 +44,6 @@ export class MinioService {
 
   async getFileLink(filename: string): Promise<string> {
     try {
-      console.log('start');
       const url = await this.minioClient.presignedUrl(
         'GET',
         this.bucketName,
