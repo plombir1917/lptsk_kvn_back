@@ -56,11 +56,8 @@ export class AccountService {
     const file: FileUpload = await photo;
 
     const { createReadStream, filename, mimetype } = file;
-    console.log('Received file:', filename);
-    console.log('MIME type:', mimetype);
 
     const buffer = await this.streamToBuffer(createReadStream());
-    console.log('Buffer length:', buffer.length);
 
     const minioFileSave = await this.minio.uploadFile(
       filename,
