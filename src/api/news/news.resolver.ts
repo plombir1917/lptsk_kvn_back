@@ -3,11 +3,13 @@ import { NewsService } from './news.service';
 import { News } from './entities/news.entity';
 import { CreateNewsInput } from './dto/create-news.input';
 import { UpdateNewsInput } from './dto/update-news.input';
+import { Roles } from '../auth/decorators/roles.decorator';
 
 @Resolver(() => News)
 export class NewsResolver {
   constructor(private readonly newsService: NewsService) {}
 
+  @Roles('ADMIN')
   @Mutation(() => News)
   createNews(@Args('createNewsInput') createNewsInput: CreateNewsInput) {
     return this.newsService.create(createNewsInput);

@@ -3,11 +3,13 @@ import { EventService } from './event.service';
 import { Event } from './entities/event.entity';
 import { CreateEventInput } from './dto/create-event.input';
 import { UpdateEventInput } from './dto/update-event.input';
+import { Roles } from '../auth/decorators/roles.decorator';
 
 @Resolver(() => Event)
 export class EventResolver {
   constructor(private readonly eventService: EventService) {}
 
+  @Roles('EDITOR', 'DIRECTOR')
   @Mutation(() => Event)
   createEvent(@Args('input') createEventInput: CreateEventInput) {
     return this.eventService.create(createEventInput);

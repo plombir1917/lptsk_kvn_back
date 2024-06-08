@@ -11,7 +11,7 @@ export class CreateEventInput {
 
   @Field(() => Date)
   @IsDate()
-  date: string;
+  date: Date;
 
   @Field(() => String)
   @IsString()

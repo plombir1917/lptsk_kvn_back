@@ -8,6 +8,7 @@ import { createWriteStream } from 'fs';
 import { join } from 'path';
 import { MinioService } from 'src/utils/minio/minio.service';
 import { FileUpload } from 'graphql-upload/GraphQLUpload.js';
+import { UpdateAccountInput } from './dto/update-account.input';
 
 @Injectable()
 export class AccountService {
@@ -23,12 +24,16 @@ export class AccountService {
       await createAccountInput.photo;
       const password = await encodePassword(createAccountInput.password);
 
-      await this.uploadFile(createAccountInput.photo);
+      await this.minio.uploadFile(createAccountInput.photo);
+
+      const fileLink = await this.minio.getFileLink(
+        (await createAccountInput.photo).filename,
+      );
 
       return await this.prisma.account.create({
         data: {
           ...createAccountInput,
-          photo: (await createAccountInput.photo).filename,
+          photo: fileLink,
           password,
         },
       });
@@ -48,52 +53,39 @@ export class AccountService {
         id,
       },
     });
-    account.photo = await this.minio.getFileLink(account.photo);
     return account;
-  }
-
-  async uploadFile(photo: FileUpload) {
-    const file: FileUpload = await photo;
-
-    const { createReadStream, filename, mimetype } = file;
-
-    const buffer = await this.streamToBuffer(createReadStream());
-
-    const minioFileSave = await this.minio.uploadFile(
-      filename,
-      buffer,
-      mimetype,
-    );
   }
 
   async getAccounts(): Promise<Account[]> {
     const accounts = await this.prisma.account.findMany();
-    for (let i = 0; i < accounts.length; i++) {
-      accounts[i].photo = await this.minio.getFileLink(accounts[i].photo);
-    }
     return accounts;
   }
 
   async updateAccount(
     id: string,
-    account: Partial<CreateAccountInput>,
+    updateAccountInput: UpdateAccountInput,
   ): Promise<Account> {
     //если пароль изменяется
-    if (account.password)
-      account.password = await encodePassword(account.password);
+    if (updateAccountInput.password)
+      updateAccountInput.password = await encodePassword(
+        updateAccountInput.password,
+      );
 
     //если фото изменяется
-    if (account.photo) {
-      const filename = (await account.photo).filename;
-      await this.uploadFile(account.photo);
+    if (updateAccountInput.photo) {
+      await this.minio.uploadFile(updateAccountInput.photo);
+
+      const fileLink = await this.minio.getFileLink(
+        (await updateAccountInput.photo).filename,
+      );
 
       return await this.prisma.account.update({
         where: {
           id,
         },
         data: {
-          ...account,
-          photo: filename,
+          ...updateAccountInput,
+          photo: fileLink,
         },
       });
     }
@@ -103,11 +95,11 @@ export class AccountService {
         id,
       },
       data: {
-        login: account.login,
-        role: account.role,
-        name: account.name,
-        surname: account.surname,
-        phone: account.phone,
+        login: updateAccountInput.login,
+        role: updateAccountInput.role,
+        name: updateAccountInput.name,
+        surname: updateAccountInput.surname,
+        phone: updateAccountInput.phone,
       },
     });
   }
@@ -117,15 +109,6 @@ export class AccountService {
       where: {
         id,
       },
-    });
-  }
-
-  private async streamToBuffer(stream: NodeJS.ReadableStream): Promise<Buffer> {
-    return new Promise((resolve, reject) => {
-      const chunks: Buffer[] = [];
-      stream.on('data', (chunk) => chunks.push(chunk));
-      stream.on('end', () => resolve(Buffer.concat(chunks)));
-      stream.on('error', reject);
     });
   }
 }

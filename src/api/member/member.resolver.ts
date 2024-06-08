@@ -3,13 +3,17 @@ import { MemberService } from './member.service';
 import { Member } from './entities/member.entity';
 import { CreateMemberInput } from './dto/create-member.input';
 import { UpdateMemberInput } from './dto/update-member.input';
+import { Roles } from '../auth/decorators/roles.decorator';
 
 @Resolver(() => Member)
 export class MemberResolver {
   constructor(private readonly memberService: MemberService) {}
 
+  @Roles('ADMIN')
   @Mutation(() => Member)
-  createMember(@Args('createMemberInput') createMemberInput: CreateMemberInput) {
+  createMember(
+    @Args('createMemberInput') createMemberInput: CreateMemberInput,
+  ) {
     return this.memberService.create(createMemberInput);
   }
 
@@ -24,7 +28,9 @@ export class MemberResolver {
   }
 
   @Mutation(() => Member)
-  updateMember(@Args('updateMemberInput') updateMemberInput: UpdateMemberInput) {
+  updateMember(
+    @Args('updateMemberInput') updateMemberInput: UpdateMemberInput,
+  ) {
     return this.memberService.update(updateMemberInput.id, updateMemberInput);
   }
 

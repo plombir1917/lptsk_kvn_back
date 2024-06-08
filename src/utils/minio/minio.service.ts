@@ -1,5 +1,5 @@
 import * as Minio from 'minio';
-import { FileUpload } from 'src/upload/file-upload.interface';
+import { FileUpload } from 'graphql-upload/GraphQLUpload.js';
 
 export class MinioService {
   private minioClient: Minio.Client;
@@ -24,8 +24,13 @@ export class MinioService {
     }
   }
 
-  async uploadFile(filename: string, buffer: Buffer, mimetype: string) {
+  async uploadFile(photo: Promise<FileUpload>) {
     try {
+      const file: FileUpload = await photo;
+
+      const { createReadStream, filename, mimetype } = file;
+
+      const buffer = await this.streamToBuffer(createReadStream());
       await this.createBucketIfNotExist();
       const res = await this.minioClient.putObject(
         this.bucketName,
@@ -53,5 +58,14 @@ export class MinioService {
     } catch (error) {
       throw error;
     }
+  }
+
+  private async streamToBuffer(stream: NodeJS.ReadableStream): Promise<Buffer> {
+    return new Promise((resolve, reject) => {
+      const chunks: Buffer[] = [];
+      stream.on('data', (chunk) => chunks.push(chunk));
+      stream.on('end', () => resolve(Buffer.concat(chunks)));
+      stream.on('error', reject);
+    });
   }
 }

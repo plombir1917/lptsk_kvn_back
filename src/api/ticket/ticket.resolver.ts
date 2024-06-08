@@ -3,13 +3,17 @@ import { TicketService } from './ticket.service';
 import { Ticket } from './entities/ticket.entity';
 import { CreateTicketInput } from './dto/create-ticket.input';
 import { UpdateTicketInput } from './dto/update-ticket.input';
+import { Roles } from '../auth/decorators/roles.decorator';
 
 @Resolver(() => Ticket)
 export class TicketResolver {
   constructor(private readonly ticketService: TicketService) {}
 
+  @Roles('ADMIN')
   @Mutation(() => Ticket)
-  createTicket(@Args('createTicketInput') createTicketInput: CreateTicketInput) {
+  createTicket(
+    @Args('createTicketInput') createTicketInput: CreateTicketInput,
+  ) {
     return this.ticketService.create(createTicketInput);
   }
 
@@ -24,7 +28,9 @@ export class TicketResolver {
   }
 
   @Mutation(() => Ticket)
-  updateTicket(@Args('updateTicketInput') updateTicketInput: UpdateTicketInput) {
+  updateTicket(
+    @Args('updateTicketInput') updateTicketInput: UpdateTicketInput,
+  ) {
     return this.ticketService.update(updateTicketInput.id, updateTicketInput);
   }
 

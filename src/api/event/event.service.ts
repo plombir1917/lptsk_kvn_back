@@ -4,27 +4,26 @@ import { UpdateEventInput } from './dto/update-event.input';
 import { PrismaService } from 'src/database/prisma.service';
 import { createWriteStream } from 'fs';
 import { join } from 'path';
+import { MinioService } from 'src/utils/minio/minio.service';
 
 @Injectable()
 export class EventService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly minio: MinioService,
+  ) {}
   async create(createEventInput: CreateEventInput) {
     try {
-      const { createReadStream, filename } = await createEventInput.photo;
-
-      const writeStream = createWriteStream(
-        join(process.cwd(), `./src/upload/${filename}`),
+      await createEventInput.photo;
+      await this.minio.uploadFile(createEventInput.photo);
+      const fileLink = await this.minio.getFileLink(
+        (await createEventInput.photo).filename,
       );
-
-      createReadStream().pipe(writeStream);
-
-      try {
-        await new Promise((resolve) => writeStream.on('finish', resolve));
-      } catch (error) {
-        throw new BadRequestException('Could not save image');
-      }
       return this.prisma.event.create({
-        data: { ...createEventInput, photo: filename },
+        data: {
+          ...createEventInput,
+          photo: fileLink,
+        },
       });
     } catch (error) {
       throw new Error(error);
@@ -38,7 +37,7 @@ export class EventService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} event`;
+    return this.prisma.event.findUnique({ where: { id } });
   }
 
   async update(id: number, event: UpdateEventInput) {

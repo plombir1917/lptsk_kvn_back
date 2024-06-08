@@ -3,13 +3,17 @@ import { SeasonService } from './season.service';
 import { Season } from './entities/season.entity';
 import { CreateSeasonInput } from './dto/create-season.input';
 import { UpdateSeasonInput } from './dto/update-season.input';
+import { Roles } from '../auth/decorators/roles.decorator';
 
 @Resolver(() => Season)
 export class SeasonResolver {
   constructor(private readonly seasonService: SeasonService) {}
 
+  @Roles('EDITOR')
   @Mutation(() => Season)
-  createSeason(@Args('createSeasonInput') createSeasonInput: CreateSeasonInput) {
+  createSeason(
+    @Args('createSeasonInput') createSeasonInput: CreateSeasonInput,
+  ) {
     return this.seasonService.create(createSeasonInput);
   }
 
@@ -24,7 +28,9 @@ export class SeasonResolver {
   }
 
   @Mutation(() => Season)
-  updateSeason(@Args('updateSeasonInput') updateSeasonInput: UpdateSeasonInput) {
+  updateSeason(
+    @Args('updateSeasonInput') updateSeasonInput: UpdateSeasonInput,
+  ) {
     return this.seasonService.update(updateSeasonInput.id, updateSeasonInput);
   }
 
