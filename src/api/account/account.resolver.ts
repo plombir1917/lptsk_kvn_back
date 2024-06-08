@@ -52,6 +52,7 @@ export class AccountResolver {
     return await this.accountService.getAccounts();
   }
 
+  @Roles('DIRECTOR')
   @Mutation(() => Account)
   async updateAccount(
     @Args('id') id: string,
