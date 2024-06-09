@@ -15,8 +15,8 @@ export class TeamResolver {
     return this.teamService.create(createTeamInput);
   }
 
-  @Query(() => [Team], { name: 'team' })
-  findAll() {
+  @Query(() => [Team])
+  getTeams() {
     return this.teamService.findAll();
   }
 
