@@ -19,6 +19,7 @@ export class EventService {
       const fileLink = await this.minio.getFileLink(
         (await createEventInput.photo).filename,
       );
+
       return this.prisma.event.create({
         data: {
           ...createEventInput,
@@ -37,27 +38,22 @@ export class EventService {
   }
 
   findOne(id: number) {
-    return this.prisma.event.findUnique({ where: { id } });
+    return this.prisma.event.findUniqueOrThrow({ where: { id } });
   }
 
   async update(id: number, event: UpdateEventInput) {
     if (event.photo) {
-      const { createReadStream, filename } = await event.photo;
-
-      const writeStream = createWriteStream(
-        join(process.cwd(), `./src/upload/${filename}`),
-      );
-
-      createReadStream().pipe(writeStream);
       try {
-        await new Promise((resolve) => writeStream.on('finish', resolve));
+        await this.minio.uploadFile(event.photo);
+
+        const filLink = (await event.photo).filename;
         return await this.prisma.event.update({
           where: {
             id,
           },
           data: {
             ...event,
-            photo: filename,
+            photo: filLink,
           },
         });
       } catch (error) {

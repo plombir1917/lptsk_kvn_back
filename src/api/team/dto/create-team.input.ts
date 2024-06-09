@@ -1,4 +1,6 @@
 import { InputType, Int, Field } from '@nestjs/graphql';
+import * as GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
+import { FileUpload } from 'graphql-upload/GraphQLUpload.js';
 
 @InputType()
 export class CreateTeamInput {
@@ -17,6 +19,6 @@ export class CreateTeamInput {
   @Field(() => Boolean)
   active: boolean;
 
-  @Field(() => String)
-  photo: string;
+  @Field(() => GraphQLUpload)
+  photo: Promise<FileUpload>;
 }

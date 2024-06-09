@@ -1,5 +1,6 @@
 import { InputType, Int, Field } from '@nestjs/graphql';
-import { Member } from '../entities/member.entity';
+import * as GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
+import { FileUpload } from 'graphql-upload/GraphQLUpload.js';
 
 @InputType()
 export class CreateMemberInput {
@@ -9,8 +10,8 @@ export class CreateMemberInput {
   @Field(() => String)
   phone: string;
 
-  @Field(() => String)
-  photo: string;
+  @Field(() => GraphQLUpload)
+  photo: Promise<FileUpload>;
 
   @Field(() => Int)
   team_id: number;

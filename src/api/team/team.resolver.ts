@@ -20,14 +20,17 @@ export class TeamResolver {
     return this.teamService.findAll();
   }
 
-  @Query(() => Team, { name: 'team' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  @Query(() => Team)
+  findOne(@Args('id') id: number) {
     return this.teamService.findOne(id);
   }
 
   @Mutation(() => Team)
-  updateTeam(@Args('updateTeamInput') updateTeamInput: UpdateTeamInput) {
-    return this.teamService.update(updateTeamInput.id, updateTeamInput);
+  updateTeam(
+    @Args('id') id: number,
+    @Args('updateTeamInput') updateTeamInput: UpdateTeamInput,
+  ) {
+    return this.teamService.update(id, updateTeamInput);
   }
 
   @Mutation(() => Team)

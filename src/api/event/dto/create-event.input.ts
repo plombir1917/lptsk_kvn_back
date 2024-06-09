@@ -1,7 +1,7 @@
 import { InputType, Int, Field } from '@nestjs/graphql';
 import { IsDate, IsNotEmpty, IsString } from 'class-validator';
 import * as GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
-import { FileUpload } from 'src/upload/file-upload.interface';
+import { FileUpload } from 'graphql-upload/GraphQLUpload.js';
 
 @InputType()
 export class CreateEventInput {
