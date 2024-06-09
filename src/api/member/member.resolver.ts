@@ -23,19 +23,20 @@ export class MemberResolver {
   }
 
   @Query(() => Member, { name: 'member' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  findOne(@Args('id') id: string) {
     return this.memberService.findOne(id);
   }
 
   @Mutation(() => Member)
   updateMember(
+    @Args('id') id: string,
     @Args('updateMemberInput') updateMemberInput: UpdateMemberInput,
   ) {
-    return this.memberService.update(updateMemberInput.id, updateMemberInput);
+    return this.memberService.update(id, updateMemberInput);
   }
 
   @Mutation(() => Member)
-  removeMember(@Args('id', { type: () => Int }) id: number) {
+  removeMember(@Args('id') id: string) {
     return this.memberService.remove(id);
   }
 }
