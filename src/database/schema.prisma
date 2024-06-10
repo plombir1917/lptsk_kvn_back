@@ -96,7 +96,6 @@ model news {
 
 model ticket {
   id Int @id @default(autoincrement())
-  price Int
   link String
 
   event event @relation(fields: [event_id], references: [id])
