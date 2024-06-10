@@ -11,7 +11,7 @@ export class TeamResolver {
 
   @Roles('EDITOR', 'DIRECTOR')
   @Mutation(() => Team)
-  createTeam(@Args('createTeamInput') createTeamInput: CreateTeamInput) {
+  createTeam(@Args('input') createTeamInput: CreateTeamInput) {
     return this.teamService.create(createTeamInput);
   }
 
@@ -29,14 +29,14 @@ export class TeamResolver {
   @Mutation(() => Team)
   updateTeam(
     @Args('id') id: number,
-    @Args('updateTeamInput') updateTeamInput: UpdateTeamInput,
+    @Args('input') updateTeamInput: UpdateTeamInput,
   ) {
     return this.teamService.update(id, updateTeamInput);
   }
 
   @Roles('EDITOR', 'DIRECTOR')
   @Mutation(() => Team)
-  removeTeam(@Args('id', { type: () => Int }) id: number) {
-    return this.teamService.remove(id);
+  deleteTeam(@Args('id') id: string) {
+    return this.teamService.remove(+id);
   }
 }

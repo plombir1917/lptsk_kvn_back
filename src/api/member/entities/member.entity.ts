@@ -9,7 +9,7 @@ export class Member {
   name: string;
 
   @Field(() => String)
-  phonr: string;
+  phone: string;
 
   @Field(() => String)
   photo: string;

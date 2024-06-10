@@ -22,4 +22,7 @@ export class Event {
 
   @Field(() => String)
   link: string;
+
+  @Field(() => Date)
+  created_at: Date;
 }

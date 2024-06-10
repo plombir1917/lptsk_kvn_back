@@ -3,6 +3,7 @@ import { CreateEventInput } from './dto/create-event.input';
 import { UpdateEventInput } from './dto/update-event.input';
 import { PrismaService } from 'src/database/prisma.service';
 import { MinioService } from 'src/utils/minio/minio.service';
+import { CreateAccountEventInput } from './dto/create-account-event.input';
 
 @Injectable()
 export class EventService {
@@ -73,6 +74,19 @@ export class EventService {
   async delete(id: number) {
     return await this.prisma.event.delete({
       where: { id },
+    });
+  }
+
+  async addOrganizarator(createAccountEventInput: CreateAccountEventInput) {
+    return await this.prisma.account_event.create({
+      data: {
+        account: { connect: { id: createAccountEventInput.account_id } },
+        event: { connect: { id: createAccountEventInput.event_id } },
+      },
+      include: {
+        event: true,
+        account: true,
+      },
     });
   }
 }
