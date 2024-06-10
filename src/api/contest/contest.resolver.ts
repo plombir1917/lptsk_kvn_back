@@ -32,12 +32,10 @@ export class ContestResolver {
   @Roles('EDITOR', 'DIRECTOR')
   @Mutation(() => Contest)
   updateContest(
+    @Args('id') id: number,
     @Args('updateContestInput') updateContestInput: UpdateContestInput,
   ) {
-    return this.contestService.update(
-      updateContestInput.id,
-      updateContestInput,
-    );
+    return this.contestService.update(id, updateContestInput);
   }
 
   @Roles('EDITOR', 'DIRECTOR')

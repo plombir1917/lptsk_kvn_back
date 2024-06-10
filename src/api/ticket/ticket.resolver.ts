@@ -30,9 +30,10 @@ export class TicketResolver {
   @Roles('ADMIN', 'DIRECTOR')
   @Mutation(() => Ticket)
   updateTicket(
+    @Args('id') id: number,
     @Args('updateTicketInput') updateTicketInput: UpdateTicketInput,
   ) {
-    return this.ticketService.update(updateTicketInput.id, updateTicketInput);
+    return this.ticketService.update(id, updateTicketInput);
   }
 
   @Roles('ADMIN', 'DIRECTOR')

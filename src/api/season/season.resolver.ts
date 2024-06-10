@@ -29,9 +29,10 @@ export class SeasonResolver {
 
   @Mutation(() => Season)
   updateSeason(
+    @Args('id') id: number,
     @Args('updateSeasonInput') updateSeasonInput: UpdateSeasonInput,
   ) {
-    return this.seasonService.update(updateSeasonInput.id, updateSeasonInput);
+    return this.seasonService.update(id, updateSeasonInput);
   }
 
   @Mutation(() => Season)
