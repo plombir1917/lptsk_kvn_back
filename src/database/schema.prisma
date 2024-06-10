@@ -28,7 +28,7 @@ model account {
 
 model season {
   id Int @id @default(autoincrement())
-  year DateTime
+  year Int
 
   news news[]
   events event[]
