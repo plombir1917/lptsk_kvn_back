@@ -9,7 +9,7 @@ import { Roles } from '../auth/decorators/roles.decorator';
 export class NewsResolver {
   constructor(private readonly newsService: NewsService) {}
 
-  @Roles('ADMIN')
+  @Roles('ADMIN', 'DIRECTOR')
   @Mutation(() => News)
   createNews(@Args('createNewsInput') createNewsInput: CreateNewsInput) {
     return this.newsService.create(createNewsInput);
@@ -25,11 +25,13 @@ export class NewsResolver {
     return this.newsService.findOne(id);
   }
 
+  @Roles('ADMIN', 'DIRECTOR')
   @Mutation(() => News)
   updateNews(@Args('updateNewsInput') updateNewsInput: UpdateNewsInput) {
     return this.newsService.update(updateNewsInput.id, updateNewsInput);
   }
 
+  @Roles('ADMIN', 'DIRECTOR')
   @Mutation(() => News)
   removeNews(@Args('id', { type: () => Int }) id: number) {
     return this.newsService.remove(id);

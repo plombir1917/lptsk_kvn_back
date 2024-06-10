@@ -15,16 +15,19 @@ export class EventResolver {
     return this.eventService.create(createEventInput);
   }
 
+  @Roles('EDITOR', 'DIRECTOR')
   @Query(() => [Event])
   getEvents() {
     return this.eventService.findAll();
   }
 
+  @Roles('EDITOR', 'DIRECTOR')
   @Query(() => Event)
   findOne(@Args('id', { type: () => Int }) id: number) {
     return this.eventService.findOne(id);
   }
 
+  @Roles('EDITOR', 'DIRECTOR')
   @Mutation(() => Event)
   updateEvent(
     @Args('id') id: string,
@@ -33,6 +36,7 @@ export class EventResolver {
     return this.eventService.update(+id, updateEventInput);
   }
 
+  @Roles('EDITOR', 'DIRECTOR')
   @Mutation(() => Event)
   deleteEvent(@Args('id') id: string) {
     return this.eventService.delete(+id);

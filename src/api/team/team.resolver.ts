@@ -9,7 +9,7 @@ import { Roles } from '../auth/decorators/roles.decorator';
 export class TeamResolver {
   constructor(private readonly teamService: TeamService) {}
 
-  @Roles('EDITOR')
+  @Roles('EDITOR', 'DIRECTOR')
   @Mutation(() => Team)
   createTeam(@Args('createTeamInput') createTeamInput: CreateTeamInput) {
     return this.teamService.create(createTeamInput);
@@ -25,6 +25,7 @@ export class TeamResolver {
     return this.teamService.findOne(id);
   }
 
+  @Roles('EDITOR', 'DIRECTOR')
   @Mutation(() => Team)
   updateTeam(
     @Args('id') id: number,
@@ -33,6 +34,7 @@ export class TeamResolver {
     return this.teamService.update(id, updateTeamInput);
   }
 
+  @Roles('EDITOR', 'DIRECTOR')
   @Mutation(() => Team)
   removeTeam(@Args('id', { type: () => Int }) id: number) {
     return this.teamService.remove(id);

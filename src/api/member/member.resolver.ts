@@ -9,24 +9,26 @@ import { Roles } from '../auth/decorators/roles.decorator';
 export class MemberResolver {
   constructor(private readonly memberService: MemberService) {}
 
-  @Roles('ADMIN')
+  @Roles('EDITOR', 'DIRECTOR')
   @Mutation(() => Member)
   createMember(
     @Args('createMemberInput') createMemberInput: CreateMemberInput,
   ) {
     return this.memberService.create(createMemberInput);
   }
-
+  @Roles('EDITOR', 'DIRECTOR')
   @Query(() => [Member], { name: 'member' })
   findAll() {
     return this.memberService.findAll();
   }
 
+  @Roles('EDITOR', 'DIRECTOR')
   @Query(() => Member, { name: 'member' })
   findOne(@Args('id') id: string) {
     return this.memberService.findOne(id);
   }
 
+  @Roles('EDITOR', 'DIRECTOR')
   @Mutation(() => Member)
   updateMember(
     @Args('id') id: string,
@@ -35,6 +37,7 @@ export class MemberResolver {
     return this.memberService.update(id, updateMemberInput);
   }
 
+  @Roles('EDITOR', 'DIRECTOR')
   @Mutation(() => Member)
   removeMember(@Args('id') id: string) {
     return this.memberService.remove(id);

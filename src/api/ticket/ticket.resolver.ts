@@ -9,7 +9,7 @@ import { Roles } from '../auth/decorators/roles.decorator';
 export class TicketResolver {
   constructor(private readonly ticketService: TicketService) {}
 
-  @Roles('ADMIN')
+  @Roles('ADMIN', 'DIRECTOR')
   @Mutation(() => Ticket)
   createTicket(
     @Args('createTicketInput') createTicketInput: CreateTicketInput,
@@ -27,6 +27,7 @@ export class TicketResolver {
     return this.ticketService.findOne(id);
   }
 
+  @Roles('ADMIN', 'DIRECTOR')
   @Mutation(() => Ticket)
   updateTicket(
     @Args('updateTicketInput') updateTicketInput: UpdateTicketInput,
@@ -34,6 +35,7 @@ export class TicketResolver {
     return this.ticketService.update(updateTicketInput.id, updateTicketInput);
   }
 
+  @Roles('ADMIN', 'DIRECTOR')
   @Mutation(() => Ticket)
   removeTicket(@Args('id', { type: () => Int }) id: number) {
     return this.ticketService.remove(id);
