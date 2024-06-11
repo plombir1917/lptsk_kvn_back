@@ -34,7 +34,7 @@ export class SeasonResolver {
   }
 
   @Mutation(() => Season)
-  deleteSeason(@Args('id', { type: () => Int }) id: number) {
+  deleteSeason(@Args('id') id: number) {
     return this.seasonService.remove(id);
   }
 }
