@@ -48,7 +48,7 @@ export class NewsService {
     return await this.prisma.news.update({
       where: { id },
       data: {
-        id: updateNewsInput.id,
+        id: id,
         link: updateNewsInput.link,
         title: updateNewsInput.title,
         season_id: updateNewsInput.season_id,

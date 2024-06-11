@@ -27,13 +27,16 @@ export class NewsResolver {
 
   @Roles('ADMIN', 'DIRECTOR')
   @Mutation(() => News)
-  updateNews(@Args('input') updateNewsInput: UpdateNewsInput) {
-    return this.newsService.update(updateNewsInput.id, updateNewsInput);
+  updateNews(
+    @Args('id') id: string,
+    @Args('input') updateNewsInput: UpdateNewsInput,
+  ) {
+    return this.newsService.update(+id, updateNewsInput);
   }
 
   @Roles('ADMIN', 'DIRECTOR')
   @Mutation(() => News)
-  removeNews(@Args('id', { type: () => Int }) id: number) {
-    return this.newsService.remove(id);
+  deleteNews(@Args('id') id: string) {
+    return this.newsService.remove(+id);
   }
 }
