@@ -104,6 +104,7 @@ export class AccountService {
         name: updateAccountInput.name,
         surname: updateAccountInput.surname,
         phone: updateAccountInput.phone,
+        password: updateAccountInput.password,
       },
     });
   }
