@@ -16,7 +16,6 @@ export class EventResolver {
     return this.eventService.create(createEventInput);
   }
 
-  @Roles('EDITOR', 'DIRECTOR')
   @Query(() => [Event])
   getEvents() {
     return this.eventService.findAll();

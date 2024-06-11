@@ -45,14 +45,16 @@ export class EventService {
       try {
         await this.minio.uploadFile(event.photo);
 
-        const filLink = (await event.photo).filename;
+        const fileLink = await this.minio.getFileLink(
+          (await event.photo).filename,
+        );
         return await this.prisma.event.update({
           where: {
             id,
           },
           data: {
             ...event,
-            photo: filLink,
+            photo: fileLink,
           },
         });
       } catch (error) {
