@@ -11,20 +11,18 @@ export class ContestResolver {
 
   @Roles('EDITOR', 'DIRECTOR')
   @Mutation(() => Contest)
-  createContest(
-    @Args('createContestInput') createContestInput: CreateContestInput,
-  ) {
+  createContest(@Args('input') createContestInput: CreateContestInput) {
     return this.contestService.create(createContestInput);
   }
 
   @Roles('EDITOR', 'DIRECTOR')
-  @Query(() => [Contest], { name: 'contest' })
-  findAll() {
+  @Query(() => [Contest])
+  getContests() {
     return this.contestService.findAll();
   }
 
   @Roles('EDITOR', 'DIRECTOR')
-  @Query(() => Contest, { name: 'contest' })
+  @Query(() => Contest)
   findOne(@Args('id', { type: () => Int }) id: number) {
     return this.contestService.findOne(id);
   }
@@ -33,14 +31,14 @@ export class ContestResolver {
   @Mutation(() => Contest)
   updateContest(
     @Args('id') id: number,
-    @Args('updateContestInput') updateContestInput: UpdateContestInput,
+    @Args('input') updateContestInput: UpdateContestInput,
   ) {
     return this.contestService.update(id, updateContestInput);
   }
 
   @Roles('EDITOR', 'DIRECTOR')
   @Mutation(() => Contest)
-  removeContest(@Args('id', { type: () => Int }) id: number) {
-    return this.contestService.remove(id);
+  deleteContest(@Args('id') id: string) {
+    return this.contestService.remove(+id);
   }
 }

@@ -8,8 +8,8 @@ export class Contest {
   @Field(() => String)
   name: string;
 
-  @Field(() => Date)
-  duration: Date;
+  @Field(() => Int)
+  duration: number;
 
   @Field(() => String)
   description: string;

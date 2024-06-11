@@ -56,7 +56,7 @@ model event {
 model contest {
   id Int @id @default(autoincrement())
   name String
-  duration DateTime @db.Time()
+  duration Int
   description String
 
   events event_contest[]

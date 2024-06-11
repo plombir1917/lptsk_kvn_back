@@ -1,26 +1,31 @@
 import { Injectable } from '@nestjs/common';
 import { CreateContestInput } from './dto/create-contest.input';
 import { UpdateContestInput } from './dto/update-contest.input';
+import { PrismaService } from 'src/database/prisma.service';
 
 @Injectable()
 export class ContestService {
-  create(createContestInput: CreateContestInput) {
-    return 'This action adds a new contest';
+  constructor(private readonly prisma: PrismaService) {}
+  async create(createContestInput: CreateContestInput) {
+    return await this.prisma.contest.create({ data: createContestInput });
   }
 
-  findAll() {
-    return `This action returns all contest`;
+  async findAll() {
+    return await this.prisma.contest.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} contest`;
+  async findOne(id: number) {
+    return await this.prisma.contest.findUnique({ where: { id } });
   }
 
-  update(id: number, updateContestInput: UpdateContestInput) {
-    return `This action updates a #${id} contest`;
+  async update(id: number, updateContestInput: UpdateContestInput) {
+    return await this.prisma.contest.update({
+      where: { id },
+      data: updateContestInput,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} contest`;
+  async remove(id: number) {
+    return await this.prisma.contest.delete({ where: { id } });
   }
 }
