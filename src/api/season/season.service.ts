@@ -1,26 +1,31 @@
 import { Injectable } from '@nestjs/common';
 import { CreateSeasonInput } from './dto/create-season.input';
 import { UpdateSeasonInput } from './dto/update-season.input';
+import { PrismaService } from 'src/database/prisma.service';
 
 @Injectable()
 export class SeasonService {
-  create(createSeasonInput: CreateSeasonInput) {
-    return 'This action adds a new season';
+  constructor(private readonly prisma: PrismaService) {}
+  async create(createSeasonInput: CreateSeasonInput) {
+    return await this.prisma.season.create({ data: createSeasonInput });
   }
 
-  findAll() {
-    return `This action returns all season`;
+  async findAll() {
+    return await this.prisma.season.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} season`;
+  async findOne(id: number) {
+    return await this.prisma.season.findUnique({ where: { id } });
   }
 
-  update(id: number, updateSeasonInput: UpdateSeasonInput) {
-    return `This action updates a #${id} season`;
+  async update(id: number, updateSeasonInput: UpdateSeasonInput) {
+    return await this.prisma.season.update({
+      where: { id },
+      data: updateSeasonInput,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} season`;
+  async remove(id: number) {
+    return await this.prisma.season.delete({ where: { id } });
   }
 }

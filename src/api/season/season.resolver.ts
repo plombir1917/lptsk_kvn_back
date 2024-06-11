@@ -9,34 +9,32 @@ import { Roles } from '../auth/decorators/roles.decorator';
 export class SeasonResolver {
   constructor(private readonly seasonService: SeasonService) {}
 
-  @Roles('EDITOR')
+  @Roles('EDITOR', 'DIRECTOR')
   @Mutation(() => Season)
-  createSeason(
-    @Args('createSeasonInput') createSeasonInput: CreateSeasonInput,
-  ) {
+  createSeason(@Args('input') createSeasonInput: CreateSeasonInput) {
     return this.seasonService.create(createSeasonInput);
   }
 
-  @Query(() => [Season], { name: 'season' })
-  findAll() {
+  @Query(() => [Season])
+  getSeasons() {
     return this.seasonService.findAll();
   }
 
-  @Query(() => Season, { name: 'season' })
+  @Query(() => Season)
   findOne(@Args('id', { type: () => Int }) id: number) {
     return this.seasonService.findOne(id);
   }
 
   @Mutation(() => Season)
   updateSeason(
-    @Args('id') id: number,
-    @Args('updateSeasonInput') updateSeasonInput: UpdateSeasonInput,
+    @Args('id') id: string,
+    @Args('input') updateSeasonInput: UpdateSeasonInput,
   ) {
-    return this.seasonService.update(id, updateSeasonInput);
+    return this.seasonService.update(+id, updateSeasonInput);
   }
 
   @Mutation(() => Season)
-  removeSeason(@Args('id', { type: () => Int }) id: number) {
+  deleteSeason(@Args('id', { type: () => Int }) id: number) {
     return this.seasonService.remove(id);
   }
 }
