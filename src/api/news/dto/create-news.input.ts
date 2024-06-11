@@ -1,4 +1,6 @@
 import { InputType, Int, Field } from '@nestjs/graphql';
+import * as GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
+import { FileUpload } from 'graphql-upload/GraphQLUpload.js';
 
 @InputType()
 export class CreateNewsInput {
@@ -8,8 +10,8 @@ export class CreateNewsInput {
   @Field()
   link: string;
 
-  @Field()
-  photo: string;
+  @Field((type) => GraphQLUpload)
+  photo: Promise<FileUpload>;
 
   @Field()
   season_id: number;

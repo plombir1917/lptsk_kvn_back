@@ -11,23 +11,23 @@ export class NewsResolver {
 
   @Roles('ADMIN', 'DIRECTOR')
   @Mutation(() => News)
-  createNews(@Args('createNewsInput') createNewsInput: CreateNewsInput) {
+  createNews(@Args('input') createNewsInput: CreateNewsInput) {
     return this.newsService.create(createNewsInput);
   }
 
-  @Query(() => [News], { name: 'news' })
-  findAll() {
+  @Query(() => [News])
+  getNews() {
     return this.newsService.findAll();
   }
 
-  @Query(() => News, { name: 'new' })
+  @Query(() => News)
   findOne(@Args('id', { type: () => Int }) id: number) {
     return this.newsService.findOne(id);
   }
 
   @Roles('ADMIN', 'DIRECTOR')
   @Mutation(() => News)
-  updateNews(@Args('updateNewsInput') updateNewsInput: UpdateNewsInput) {
+  updateNews(@Args('input') updateNewsInput: UpdateNewsInput) {
     return this.newsService.update(updateNewsInput.id, updateNewsInput);
   }
 
