@@ -28,13 +28,13 @@ export class MemberResolver {
     return this.memberService.create(createMemberInput);
   }
   @Roles('EDITOR', 'DIRECTOR')
-  @Query(() => [Member], { name: 'member' })
-  findAll() {
+  @Query(() => [Member])
+  getMembers() {
     return this.memberService.findAll();
   }
 
   @Roles('EDITOR', 'DIRECTOR')
-  @Query(() => Member, { name: 'member' })
+  @Query(() => Member)
   findOne(@Args('id') id: string) {
     return this.memberService.findOne(id);
   }
@@ -43,7 +43,7 @@ export class MemberResolver {
   @Mutation(() => Member)
   updateMember(
     @Args('id') id: string,
-    @Args('updateMemberInput') updateMemberInput: UpdateMemberInput,
+    @Args('input') updateMemberInput: UpdateMemberInput,
   ) {
     return this.memberService.update(id, updateMemberInput);
   }
