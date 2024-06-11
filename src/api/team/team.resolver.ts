@@ -28,10 +28,10 @@ export class TeamResolver {
   @Roles('EDITOR', 'DIRECTOR')
   @Mutation(() => Team)
   updateTeam(
-    @Args('id') id: number,
+    @Args('id') id: string,
     @Args('input') updateTeamInput: UpdateTeamInput,
   ) {
-    return this.teamService.update(id, updateTeamInput);
+    return this.teamService.update(+id, updateTeamInput);
   }
 
   @Roles('EDITOR', 'DIRECTOR')
