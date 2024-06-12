@@ -2,9 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/database/prisma.service';
 import { AccountNotFoundError } from 'src/errors/account-not-found.error';
-import { comparePassword } from 'src/utils/bcrypt';
+import { comparePassword, encodePassword } from 'src/utils/bcrypt';
 import { LoginAccountInput } from './dto/login-account.input';
 import { Account } from '../account/account.entity';
+import { ChangePasswordInput } from './dto/change-password.input';
 
 @Injectable()
 export class AuthService {
@@ -40,5 +41,22 @@ export class AuthService {
 
   async decodeToken(token: string) {
     return this.jwtService.decode(token);
+  }
+
+  async changePassword(input: ChangePasswordInput) {
+    const account = await this.validateAccount({
+      login: input.login,
+      password: input.oldPassword,
+    });
+
+    const newPassword = await encodePassword(input.newPassword);
+    return await this.prisma.account.update({
+      where: {
+        id: account.id,
+      },
+      data: {
+        password: newPassword,
+      },
+    });
   }
 }
