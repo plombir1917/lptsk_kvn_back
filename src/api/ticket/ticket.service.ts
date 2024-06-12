@@ -15,6 +15,13 @@ export class TicketService {
   async findAll() {
     return await this.prisma.ticket.findMany();
   }
+  async getTicketsByEvent(event_id: number) {
+    return await this.prisma.ticket.findFirstOrThrow({
+      where: {
+        event_id: event_id,
+      },
+    });
+  }
 
   findOne(id: number) {
     return `This action returns a #${id} ticket`;

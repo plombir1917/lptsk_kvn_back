@@ -33,10 +33,11 @@ export class OrganizerService {
       where: {
         account_id: id,
       },
-      include: {
+      select: {
         event: true,
       },
     });
+    console.log(events);
     return events;
   }
 

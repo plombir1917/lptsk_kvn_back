@@ -1,14 +1,27 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  Int,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql';
 import { EventService } from './event.service';
 import { Event } from './entities/event.entity';
 import { CreateEventInput } from './dto/create-event.input';
 import { UpdateEventInput } from './dto/update-event.input';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { CreateAccountEventInput } from './dto/create-account-event.input';
+import { Ticket } from '../ticket/entities/ticket.entity';
+import { TicketService } from '../ticket/ticket.service';
 
 @Resolver(() => Event)
 export class EventResolver {
-  constructor(private readonly eventService: EventService) {}
+  constructor(
+    private readonly eventService: EventService,
+    private readonly ticketService: TicketService,
+  ) {}
 
   @Roles('EDITOR', 'DIRECTOR')
   @Mutation(() => Event)
@@ -47,5 +60,10 @@ export class EventResolver {
     @Args('input') createAccountEventInput: CreateAccountEventInput,
   ) {
     return this.eventService.addOrganizarator(createAccountEventInput);
+  }
+
+  @ResolveField(() => Ticket)
+  async ticket(@Parent() event: Event) {
+    return await this.ticketService.getTicketsByEvent(event.id);
   }
 }

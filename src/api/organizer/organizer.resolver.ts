@@ -1,18 +1,25 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
 import { Organizer } from './organizer.entity';
 import { CreateOrganizerInput } from './dto/create-organizer.input';
 import { OrganizerService } from './organizer.service';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
-import { User } from '../auth/decorators/user.decorator';
-import { AuthService } from '../auth/auth.service';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UpdateOrganizerInput } from './dto/update-organizer.input';
+import { Event } from '../event/entities/event.entity';
+import { EventService } from '../event/event.service';
 
 @Resolver('Organizer')
 export class OrganizerResolver {
   constructor(
     private readonly organizerService: OrganizerService,
-    private readonly authService: AuthService,
+    private readonly eventService: EventService,
   ) {}
 
   @Roles('DIRECTOR')
@@ -26,7 +33,7 @@ export class OrganizerResolver {
   }
 
   @Roles('DIRECTOR', 'EDITOR', 'ADMIN')
-  @Query(() => Organizer)
+  @Query(() => [Organizer])
   async getEventsByOrganizerId(@Args('id') id: string) {
     try {
       return await this.organizerService.getEventsByOrganizerId(id);
@@ -54,4 +61,9 @@ export class OrganizerResolver {
   ) {
     return await this.organizerService.deleteOrganizer(createOrganizerInput);
   }
+
+  // @ResolveField(() => Event)
+  // event(@Parent() organizer: Organizer) {
+  //   return this.eventService.findOne(organizer.event_id);
+  // }
 }
