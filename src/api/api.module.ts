@@ -8,6 +8,7 @@ import { ContestModule } from './contest/contest.module';
 import { TeamModule } from './team/team.module';
 import { MemberModule } from './member/member.module';
 import { TicketModule } from './ticket/ticket.module';
+import { OrganizerModule } from './organizer/organizer.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { TicketModule } from './ticket/ticket.module';
     TeamModule,
     MemberModule,
     TicketModule,
+    OrganizerModule,
   ],
   controllers: [],
   providers: [],
