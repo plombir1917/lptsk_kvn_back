@@ -1,15 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTicketInput } from './dto/create-ticket.input';
 import { UpdateTicketInput } from './dto/update-ticket.input';
+import { PrismaService } from 'src/database/prisma.service';
 
 @Injectable()
 export class TicketService {
-  create(createTicketInput: CreateTicketInput) {
-    return 'This action adds a new ticket';
+  constructor(private readonly prisma: PrismaService) {}
+  async create(createTicketInput: CreateTicketInput) {
+    return await this.prisma.ticket.create({
+      data: createTicketInput,
+    });
   }
 
-  findAll() {
-    return `This action returns all ticket`;
+  async findAll() {
+    return await this.prisma.ticket.findMany();
   }
 
   findOne(id: number) {
@@ -17,10 +21,13 @@ export class TicketService {
   }
 
   update(id: number, updateTicketInput: UpdateTicketInput) {
-    return `This action updates a #${id} ticket`;
+    return this.prisma.ticket.update({
+      where: { id },
+      data: updateTicketInput,
+    });
   }
 
   remove(id: number) {
-    return `This action removes a #${id} ticket`;
+    return this.prisma.ticket.delete({ where: { id } });
   }
 }

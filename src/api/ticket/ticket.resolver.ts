@@ -1,24 +1,35 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  Int,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql';
 import { TicketService } from './ticket.service';
 import { Ticket } from './entities/ticket.entity';
 import { CreateTicketInput } from './dto/create-ticket.input';
 import { UpdateTicketInput } from './dto/update-ticket.input';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { EventService } from '../event/event.service';
+import { Event } from '../event/entities/event.entity';
 
 @Resolver(() => Ticket)
 export class TicketResolver {
-  constructor(private readonly ticketService: TicketService) {}
+  constructor(
+    private readonly ticketService: TicketService,
+    private readonly eventService: EventService,
+  ) {}
 
   @Roles('ADMIN', 'DIRECTOR')
   @Mutation(() => Ticket)
-  createTicket(
-    @Args('createTicketInput') createTicketInput: CreateTicketInput,
-  ) {
+  createTicket(@Args('input') createTicketInput: CreateTicketInput) {
     return this.ticketService.create(createTicketInput);
   }
 
-  @Query(() => [Ticket], { name: 'ticket' })
-  findAll() {
+  @Query(() => [Ticket])
+  getTickets() {
     return this.ticketService.findAll();
   }
 
@@ -38,7 +49,12 @@ export class TicketResolver {
 
   @Roles('ADMIN', 'DIRECTOR')
   @Mutation(() => Ticket)
-  removeTicket(@Args('id', { type: () => Int }) id: number) {
+  deleteTicket(@Args('id', { type: () => Int }) id: number) {
     return this.ticketService.remove(id);
+  }
+
+  @ResolveField(() => Event)
+  event(@Parent() ticket: Ticket) {
+    return this.eventService.findOne(ticket.event_id);
   }
 }
