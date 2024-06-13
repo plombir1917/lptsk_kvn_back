@@ -37,7 +37,6 @@ export class OrganizerService {
         event: true,
       },
     });
-    console.log(events);
     return events;
   }
 
