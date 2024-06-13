@@ -9,7 +9,7 @@ export class Event {
   name: string;
 
   @Field(() => Date)
-  date: string;
+  date: Date;
 
   @Field(() => String)
   place: string;

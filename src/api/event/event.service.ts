@@ -5,12 +5,15 @@ import { PrismaService } from 'src/database/prisma.service';
 import { MinioService } from 'src/utils/minio/minio.service';
 import { CreateAccountEventInput } from './dto/create-account-event.input';
 import { CreateActivityInput } from './dto/create-activity.input';
+import { Activity } from './entities/activity.entity';
+import { TeamService } from '../team/team.service';
 
 @Injectable()
 export class EventService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly minio: MinioService,
+    private readonly teamService: TeamService,
   ) {}
   async create(createEventInput: CreateEventInput) {
     try {
@@ -32,14 +35,30 @@ export class EventService {
   }
 
   async createActivity(createActivityInput: CreateActivityInput) {
-    return await this.prisma.team_event.create({
-      data: {
-        event: { connect: { id: createActivityInput.event_id } },
-        team: { connect: { id: createActivityInput.team_id } },
-        team_rate: createActivityInput.team_rate,
-      },
-      include: { event: true, team: true },
-    });
+    try {
+      const activity: Activity = await this.prisma.team_event.create({
+        data: {
+          event: { connect: { id: createActivityInput.event_id } },
+          team: { connect: { id: createActivityInput.team_id } },
+          team_rate: createActivityInput.team_rate,
+        },
+        include: { event: true, team: true },
+      });
+
+      if (!activity) throw new Error();
+      return await this.addTeamRate(activity);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  async addTeamRate(activity: Activity) {
+    try {
+      await this.teamService.update(activity.team_id, {
+        rate: activity.team_rate + activity.team.rate,
+      });
+      return activity;
+    } catch (error) {}
   }
 
   async findAll() {

@@ -55,8 +55,6 @@ export class TeamResolver {
 
   @ResolveField(() => [Activity], { nullable: true })
   async event(@Parent() team: Team) {
-    const events = await this.eventService.findManyByTeamId(team.id);
-    console.log(events);
-    return events;
+    return await this.eventService.findManyByTeamId(team.id);
   }
 }
