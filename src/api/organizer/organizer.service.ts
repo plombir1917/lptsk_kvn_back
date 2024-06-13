@@ -1,11 +1,10 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
 import { CreateOrganizerInput } from './dto/create-organizer.input';
-import { Organizer } from './organizer.entity';
-import { encodePassword } from 'src/utils/bcrypt';
 import { MinioService } from 'src/utils/minio/minio.service';
 import { UpdateOrganizerInput } from './dto/update-organizer.input';
 import { SmsService } from 'src/utils/sms.service';
+import { Workbook } from 'exceljs';
 
 @Injectable()
 export class OrganizerService {
@@ -40,6 +39,21 @@ export class OrganizerService {
     return events;
   }
 
+  async downloadExcel() {
+    const workbook = new Workbook();
+    const worksheet = workbook.addWorksheet('Организаторы');
+
+    worksheet.columns = [
+      { header: 'account.name', key: 'account', width: 25 },
+      { header: 'event.name', key: 'event', width: 25 },
+    ];
+    const organizers = await this.getOrganizers();
+
+    worksheet.addRows(organizers);
+    console.log(await workbook.xlsx.writeFile('organizers.xlsx'));
+    return workbook.xlsx.writeBuffer();
+  }
+
   async getOrganizers() {
     const organizers = await this.prisma.account_event.findMany({
       include: {
@@ -47,6 +61,7 @@ export class OrganizerService {
         event: true,
       },
     });
+
     return organizers;
   }
 

@@ -1,20 +1,11 @@
-import {
-  Args,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Organizer } from './organizer.entity';
 import { CreateOrganizerInput } from './dto/create-organizer.input';
 import { OrganizerService } from './organizer.service';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UpdateOrganizerInput } from './dto/update-organizer.input';
-import { Event } from '../event/entities/event.entity';
 import { EventService } from '../event/event.service';
-
 @Resolver('Organizer')
 export class OrganizerResolver {
   constructor(
@@ -42,6 +33,11 @@ export class OrganizerResolver {
     }
   }
 
+  @Query(() => Boolean)
+  async donwloadExcel() {
+    return await this.organizerService.downloadExcel();
+  }
+
   @Roles('DIRECTOR')
   @Query(() => [Organizer])
   async getOrganizers() {
@@ -61,9 +57,4 @@ export class OrganizerResolver {
   ) {
     return await this.organizerService.deleteOrganizer(createOrganizerInput);
   }
-
-  // @ResolveField(() => Event)
-  // event(@Parent() organizer: Organizer) {
-  //   return this.eventService.findOne(organizer.event_id);
-  // }
 }

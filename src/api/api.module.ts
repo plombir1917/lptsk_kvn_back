@@ -9,6 +9,7 @@ import { TeamModule } from './team/team.module';
 import { MemberModule } from './member/member.module';
 import { TicketModule } from './ticket/ticket.module';
 import { OrganizerModule } from './organizer/organizer.module';
+import { SubscriberModule } from './subscriber/subscriber.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { OrganizerModule } from './organizer/organizer.module';
     MemberModule,
     TicketModule,
     OrganizerModule,
+    SubscriberModule,
   ],
   controllers: [],
   providers: [],
