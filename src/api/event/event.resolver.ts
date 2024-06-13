@@ -62,8 +62,9 @@ export class EventResolver {
     return this.eventService.addOrganizarator(createAccountEventInput);
   }
 
-  @ResolveField(() => Ticket)
+  @ResolveField(() => Ticket, { nullable: true })
   async ticket(@Parent() event: Event) {
-    return await this.ticketService.getTicketsByEvent(event.id);
+    const ticket = await this.ticketService.getTicketsByEvent(event.id);
+    return ticket;
   }
 }
