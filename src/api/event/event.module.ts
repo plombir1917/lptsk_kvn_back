@@ -8,5 +8,6 @@ import { TicketService } from '../ticket/ticket.service';
 @Module({
   imports: [PrismaModule, MinioModule],
   providers: [EventResolver, EventService, TicketService],
+  exports: [EventService],
 })
 export class EventModule {}

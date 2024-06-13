@@ -15,6 +15,8 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { CreateAccountEventInput } from './dto/create-account-event.input';
 import { Ticket } from '../ticket/entities/ticket.entity';
 import { TicketService } from '../ticket/ticket.service';
+import { CreateActivityInput } from './dto/create-activity.input';
+import { Activity } from './entities/activity.entity';
 
 @Resolver(() => Event)
 export class EventResolver {
@@ -27,6 +29,12 @@ export class EventResolver {
   @Mutation(() => Event)
   createEvent(@Args('input') createEventInput: CreateEventInput) {
     return this.eventService.create(createEventInput);
+  }
+
+  @Roles('EDITOR', 'DIRECTOR')
+  @Mutation(() => Activity)
+  async addActivity(@Args('input') createActivityInput: CreateActivityInput) {
+    return await this.eventService.createActivity(createActivityInput);
   }
 
   @Query(() => [Event])
@@ -64,7 +72,6 @@ export class EventResolver {
 
   @ResolveField(() => Ticket, { nullable: true })
   async ticket(@Parent() event: Event) {
-    const ticket = await this.ticketService.getTicketsByEvent(event.id);
-    return ticket;
+    return await this.ticketService.getTicketsByEvent(event.id);
   }
 }

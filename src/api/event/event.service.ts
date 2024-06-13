@@ -4,6 +4,7 @@ import { UpdateEventInput } from './dto/update-event.input';
 import { PrismaService } from 'src/database/prisma.service';
 import { MinioService } from 'src/utils/minio/minio.service';
 import { CreateAccountEventInput } from './dto/create-account-event.input';
+import { CreateActivityInput } from './dto/create-activity.input';
 
 @Injectable()
 export class EventService {
@@ -30,6 +31,17 @@ export class EventService {
     }
   }
 
+  async createActivity(createActivityInput: CreateActivityInput) {
+    return await this.prisma.team_event.create({
+      data: {
+        event: { connect: { id: createActivityInput.event_id } },
+        team: { connect: { id: createActivityInput.team_id } },
+        team_rate: createActivityInput.team_rate,
+      },
+      include: { event: true, team: true },
+    });
+  }
+
   async findAll() {
     const events = await this.prisma.event.findMany();
     if (!events.length) throw new Error('Events not found');
@@ -38,6 +50,15 @@ export class EventService {
 
   findOne(id: number) {
     return this.prisma.event.findUniqueOrThrow({ where: { id } });
+  }
+
+  async findManyByTeamId(team_id: number) {
+    const events = await this.prisma.team_event.findMany({
+      where: { team_id: team_id },
+      include: { event: true },
+    });
+    if (!events.length) throw new Error('Events not found');
+    return events;
   }
 
   async update(id: number, event: UpdateEventInput) {
