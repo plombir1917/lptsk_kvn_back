@@ -44,7 +44,7 @@ model event {
   link String
   created_at DateTime @default(now())
 
-  tickets ticket[]
+  tickets ticket?
   accounts account_event[]
   teams team_event[]
   contests event_contest[]
@@ -100,7 +100,7 @@ model ticket {
   link String
 
   event event @relation(fields: [event_id], references: [id])
-  event_id Int
+  event_id Int @unique
 }
 
 model account_event {
