@@ -67,6 +67,17 @@ export class EventService {
     return events;
   }
 
+  async removeActivity(deleteActivityInput: Partial<CreateActivityInput>) {
+    return await this.prisma.team_event.delete({
+      where: {
+        team_id_event_id: {
+          team_id: deleteActivityInput.team_id,
+          event_id: deleteActivityInput.event_id,
+        },
+      },
+    });
+  }
+
   findOne(id: number) {
     return this.prisma.event.findUniqueOrThrow({ where: { id } });
   }

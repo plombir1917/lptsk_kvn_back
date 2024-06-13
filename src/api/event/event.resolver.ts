@@ -70,6 +70,15 @@ export class EventResolver {
     return this.eventService.addOrganizarator(createAccountEventInput);
   }
 
+  @Mutation(() => Activity)
+  async deleteActivity(
+    @Args('input') deleteActivityInput: CreateActivityInput,
+  ) {
+    return await this.eventService.removeActivity(
+      deleteActivityInput as Partial<CreateActivityInput>,
+    );
+  }
+
   @ResolveField(() => Ticket, { nullable: true })
   async ticket(@Parent() event: Event) {
     return await this.ticketService.getTicketsByEvent(event.id);
