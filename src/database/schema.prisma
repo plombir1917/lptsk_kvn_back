@@ -93,6 +93,8 @@ model news {
 
   season season @relation(fields: [season_id], references: [id])
   season_id Int
+
+  subscriber news_subscriber[]
 }
 
 model ticket {
@@ -101,6 +103,24 @@ model ticket {
 
   event event @relation(fields: [event_id], references: [id])
   event_id Int @unique
+}
+
+model subscriber {
+  id String @id @default(uuid())
+  name String
+  phone String
+
+  news news_subscriber[]
+}
+
+model news_subscriber {
+  news news @relation(fields: [news_id], references: [id])
+  news_id Int
+
+  subscriber subscriber @relation(fields: [subscriber_id], references: [id])
+  subscriber_id String
+
+  @@id([news_id, subscriber_id])
 }
 
 model account_event {
