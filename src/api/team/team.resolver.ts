@@ -12,8 +12,8 @@ import { CreateTeamInput } from './dto/create-team.input';
 import { UpdateTeamInput } from './dto/update-team.input';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { EventService } from '../event/event.service';
-import { Event } from '../event/entities/event.entity';
 import { Activity } from '../event/entities/activity.entity';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 @Resolver(() => Team)
 export class TeamResolver {
@@ -24,33 +24,44 @@ export class TeamResolver {
 
   @Roles('EDITOR', 'DIRECTOR')
   @Mutation(() => Team)
-  createTeam(@Args('input') createTeamInput: CreateTeamInput) {
-    return this.teamService.create(createTeamInput);
+  async createTeam(@Args('input') createTeamInput: CreateTeamInput) {
+    try {
+      return await this.teamService.create(createTeamInput);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   @Query(() => [Team])
-  getTeams() {
-    return this.teamService.findAll();
-  }
-
-  @Query(() => Team)
-  findOne(@Args('id') id: number) {
-    return this.teamService.findOne(id);
+  async getTeams() {
+    try {
+      return await this.teamService.findAll();
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
   }
 
   @Roles('EDITOR', 'DIRECTOR')
   @Mutation(() => Team)
-  updateTeam(
+  async updateTeam(
     @Args('id') id: string,
     @Args('input') updateTeamInput: UpdateTeamInput,
   ) {
-    return this.teamService.update(+id, updateTeamInput);
+    try {
+      return await this.teamService.update(+id, updateTeamInput);
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
   }
 
   @Roles('EDITOR', 'DIRECTOR')
   @Mutation(() => Team)
-  deleteTeam(@Args('id') id: string) {
-    return this.teamService.remove(+id);
+  async deleteTeam(@Args('id') id: string) {
+    try {
+      return await this.teamService.remove(+id);
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
   }
 
   @ResolveField(() => [Activity], { nullable: true })

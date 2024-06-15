@@ -3,6 +3,7 @@ import { CreateTeamInput } from './dto/create-team.input';
 import { UpdateTeamInput } from './dto/update-team.input';
 import { PrismaService } from 'src/database/prisma.service';
 import { MinioService } from 'src/utils/minio/minio.service';
+import { NotFoundError } from 'src/errors/not-found.error';
 
 @Injectable()
 export class TeamService {
@@ -12,58 +13,78 @@ export class TeamService {
   ) {}
 
   async create(createTeamInput: CreateTeamInput) {
-    await this.minio.uploadFile(createTeamInput.photo);
+    try {
+      await this.minio.uploadFile(createTeamInput.photo);
 
-    const fileLink = await this.minio.getFileLink(
-      (await createTeamInput.photo).filename,
-    );
+      const fileLink = await this.minio.getFileLink(
+        (await createTeamInput.photo).filename,
+      );
 
-    return await this.prisma.team.create({
-      data: {
-        ...createTeamInput,
-        photo: fileLink,
-      },
-    });
+      return await this.prisma.team.create({
+        data: {
+          ...createTeamInput,
+          photo: fileLink,
+        },
+      });
+    } catch (error) {
+      throw new Error(error.message);
+    }
   }
 
-  findAll() {
-    return this.prisma.team.findMany();
+  async findAll() {
+    try {
+      return await this.prisma.team.findMany();
+    } catch (error) {
+      throw new NotFoundError('Team');
+    }
   }
 
-  findOne(id: number) {
-    return this.prisma.team.findUnique({ where: { id } });
+  async findOne(id: number) {
+    try {
+      return await this.prisma.team.findUnique({ where: { id } });
+    } catch (error) {
+      throw new NotFoundError('Team');
+    }
   }
 
   async update(id: number, updateTeamInput: UpdateTeamInput) {
-    if (updateTeamInput.photo) {
-      this.minio.uploadFile(updateTeamInput.photo);
+    try {
+      if (updateTeamInput.photo) {
+        this.minio.uploadFile(updateTeamInput.photo);
 
-      const fileLink = this.minio.getFileLink(
-        (await updateTeamInput.photo).filename,
-      );
+        const fileLink = this.minio.getFileLink(
+          (await updateTeamInput.photo).filename,
+        );
+
+        return this.prisma.team.update({
+          where: { id },
+          data: {
+            ...updateTeamInput,
+            photo: await fileLink,
+          },
+        });
+      }
 
       return this.prisma.team.update({
         where: { id },
         data: {
-          ...updateTeamInput,
-          photo: await fileLink,
+          achievments: updateTeamInput.achievments,
+          home: updateTeamInput.home,
+          name: updateTeamInput.name,
+          rate: updateTeamInput.rate,
+          active: updateTeamInput.active,
         },
       });
+    } catch (error) {
+      throw new NotFoundError('Team');
     }
-
-    return this.prisma.team.update({
-      where: { id },
-      data: {
-        achievments: updateTeamInput.achievments,
-        home: updateTeamInput.home,
-        name: updateTeamInput.name,
-        rate: updateTeamInput.rate,
-        active: updateTeamInput.active,
-      },
-    });
   }
 
-  remove(id: number) {
-    return this.prisma.team.delete({ where: { id } });
+  async remove(id: number) {
+    try {
+      return this.prisma.team.delete({ where: { id } });
+    } catch (error) {
+      throw new NotFoundError('Team');
+    }
   }
 }

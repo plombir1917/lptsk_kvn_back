@@ -8,5 +8,6 @@ import { EventModule } from '../event/event.module';
 @Module({
   imports: [MinioModule, PrismaModule, EventModule],
   providers: [TeamResolver, TeamService],
+  exports: [TeamService],
 })
 export class TeamModule {}
