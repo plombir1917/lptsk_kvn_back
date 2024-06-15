@@ -5,13 +5,9 @@ import { OrganizerService } from './organizer.service';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UpdateOrganizerInput } from './dto/update-organizer.input';
-import { EventService } from '../event/event.service';
 @Resolver('Organizer')
 export class OrganizerResolver {
-  constructor(
-    private readonly organizerService: OrganizerService,
-    private readonly eventService: EventService,
-  ) {}
+  constructor(private readonly organizerService: OrganizerService) {}
 
   @Roles('DIRECTOR')
   @Mutation(() => Organizer)
@@ -23,13 +19,13 @@ export class OrganizerResolver {
     }
   }
 
-  @Roles('DIRECTOR', 'EDITOR', 'ADMIN')
+  @Roles('DIRECTOR')
   @Query(() => [Organizer])
   async getEventsByOrganizerId(@Args('id') id: string) {
     try {
       return await this.organizerService.getEventsByOrganizerId(id);
     } catch (error) {
-      throw new NotFoundException('Organizer not found!');
+      throw new NotFoundException(error.message);
     }
   }
 
@@ -41,13 +37,21 @@ export class OrganizerResolver {
   @Roles('DIRECTOR')
   @Query(() => [Organizer])
   async getOrganizers() {
-    return await this.organizerService.getOrganizers();
+    try {
+      return await this.organizerService.getOrganizers();
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
   }
 
-  // @Roles('DIRECTOR')
+  @Roles('DIRECTOR')
   @Mutation(() => Organizer)
   async updateOrganizer(@Args('input') input: UpdateOrganizerInput) {
-    return await this.organizerService.updateOrganizer(input);
+    try {
+      return await this.organizerService.updateOrganizer(input);
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
   }
 
   @Roles('DIRECTOR')
