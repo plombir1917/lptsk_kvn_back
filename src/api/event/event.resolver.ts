@@ -17,6 +17,7 @@ import { Ticket } from '../ticket/entities/ticket.entity';
 import { TicketService } from '../ticket/ticket.service';
 import { CreateActivityInput } from './dto/create-activity.input';
 import { Activity } from './entities/activity.entity';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 @Resolver(() => Event)
 export class EventResolver {
@@ -27,60 +28,98 @@ export class EventResolver {
 
   @Roles('EDITOR', 'DIRECTOR')
   @Mutation(() => Event)
-  createEvent(@Args('input') createEventInput: CreateEventInput) {
-    return this.eventService.create(createEventInput);
+  async createEvent(@Args('input') createEventInput: CreateEventInput) {
+    try {
+      return await this.eventService.create(createEventInput);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   @Roles('EDITOR', 'DIRECTOR')
   @Mutation(() => Activity)
   async addActivity(@Args('input') createActivityInput: CreateActivityInput) {
-    return await this.eventService.createActivity(createActivityInput);
+    try {
+      return await this.eventService.createActivity(createActivityInput);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   @Query(() => [Event])
-  getEvents() {
-    return this.eventService.findAll();
+  async getEvents() {
+    try {
+      return await this.eventService.findAll();
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
   }
 
   @Roles('EDITOR', 'DIRECTOR')
   @Query(() => Event)
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.eventService.findOne(id);
+  async findOne(@Args('id', { type: () => Int }) id: number) {
+    try {
+      return await this.eventService.findOne(id);
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
   }
 
   @Roles('EDITOR', 'DIRECTOR')
   @Mutation(() => Event)
-  updateEvent(
+  async updateEvent(
     @Args('id') id: string,
     @Args('input') updateEventInput: UpdateEventInput,
   ) {
-    return this.eventService.update(+id, updateEventInput);
+    try {
+      return await this.eventService.update(+id, updateEventInput);
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
   }
 
   @Roles('EDITOR', 'DIRECTOR')
   @Mutation(() => Event)
-  deleteEvent(@Args('id') id: string) {
-    return this.eventService.delete(+id);
+  async deleteEvent(@Args('id') id: string) {
+    try {
+      return await this.eventService.delete(+id);
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
   }
 
+  @Roles('DIRECTOR')
   @Mutation(() => Event)
-  addOrganizator(
+  async addOrganizator(
     @Args('input') createAccountEventInput: CreateAccountEventInput,
   ) {
-    return this.eventService.addOrganizarator(createAccountEventInput);
+    try {
+      return await this.eventService.addOrganizarator(createAccountEventInput);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
+  @Roles('DIRECTOR', 'EDITOR')
   @Mutation(() => Activity)
   async deleteActivity(
     @Args('input') deleteActivityInput: CreateActivityInput,
   ) {
-    return await this.eventService.removeActivity(
-      deleteActivityInput as Partial<CreateActivityInput>,
-    );
+    try {
+      return await this.eventService.deleteActivity(
+        deleteActivityInput as Partial<CreateActivityInput>,
+      );
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
   }
 
   @ResolveField(() => Ticket, { nullable: true })
   async ticket(@Parent() event: Event) {
-    return await this.ticketService.getTicketsByEvent(event.id);
+    try {
+      return await this.ticketService.getTicketsByEvent(event.id);
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
   }
 }

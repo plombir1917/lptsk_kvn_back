@@ -7,18 +7,22 @@ import { FileUpload } from 'graphql-upload/GraphQLUpload.js';
 export class CreateEventInput {
   @Field(() => String)
   @IsString()
+  @IsNotEmpty()
   name: string;
 
   @Field(() => Date)
   @IsDate()
+  @IsNotEmpty()
   date: Date;
 
   @Field(() => String)
   @IsString()
+  @IsNotEmpty()
   place: string;
 
   @Field(() => String)
   @IsString()
+  @IsNotEmpty()
   description: string;
 
   @Field(() => GraphQLUpload)
@@ -27,5 +31,6 @@ export class CreateEventInput {
 
   @Field(() => String)
   @IsString()
+  @IsNotEmpty()
   link: string;
 }

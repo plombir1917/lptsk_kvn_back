@@ -7,6 +7,8 @@ import { CreateAccountEventInput } from './dto/create-account-event.input';
 import { CreateActivityInput } from './dto/create-activity.input';
 import { Activity } from './entities/activity.entity';
 import { TeamService } from '../team/team.service';
+import { AlreadyExistError } from 'src/errors/already-exist.error';
+import { NotFoundError } from 'src/errors/not-found.error';
 
 @Injectable()
 export class EventService {
@@ -15,6 +17,7 @@ export class EventService {
     private readonly minio: MinioService,
     private readonly teamService: TeamService,
   ) {}
+
   async create(createEventInput: CreateEventInput) {
     try {
       await createEventInput.photo;
@@ -30,7 +33,7 @@ export class EventService {
         },
       });
     } catch (error) {
-      throw new Error(error);
+      throw new AlreadyExistError('Event');
     }
   }
 
@@ -48,7 +51,7 @@ export class EventService {
       if (!activity) throw new Error();
       return await this.addTeamRate(activity);
     } catch (error) {
-      throw new BadRequestException(error.message);
+      throw new AlreadyExistError('Activity');
     }
   }
 
@@ -58,88 +61,118 @@ export class EventService {
         rate: activity.team_rate + activity.team.rate,
       });
       return activity;
-    } catch (error) {}
+    } catch (error) {
+      throw new Error(error.message);
+    }
   }
 
   async findAll() {
-    const events = await this.prisma.event.findMany();
-    if (!events.length) throw new Error('Events not found');
-    return events;
+    try {
+      const events = await this.prisma.event.findMany();
+      if (!events.length) throw new Error('Events not found');
+      return events;
+    } catch (error) {
+      throw new NotFoundError('Event');
+    }
   }
 
-  async removeActivity(deleteActivityInput: Partial<CreateActivityInput>) {
-    return await this.prisma.team_event.delete({
-      where: {
-        team_id_event_id: {
-          team_id: deleteActivityInput.team_id,
-          event_id: deleteActivityInput.event_id,
+  async deleteActivity(deleteActivityInput: Partial<CreateActivityInput>) {
+    try {
+      return await this.prisma.team_event.delete({
+        where: {
+          team_id_event_id: {
+            team_id: deleteActivityInput.team_id,
+            event_id: deleteActivityInput.event_id,
+          },
         },
-      },
-    });
+      });
+    } catch (error) {
+      throw new NotFoundError('Event');
+    }
   }
 
   findOne(id: number) {
-    return this.prisma.event.findUniqueOrThrow({ where: { id } });
+    try {
+      return this.prisma.event.findUniqueOrThrow({ where: { id } });
+    } catch (error) {
+      throw new NotFoundError('Event');
+    }
   }
 
   async findManyByTeamId(team_id: number) {
-    const events = await this.prisma.team_event.findMany({
-      where: { team_id: team_id },
-      include: { event: true },
-    });
-    if (!events.length) throw new Error('Events not found');
-    return events;
+    try {
+      const events = await this.prisma.team_event.findMany({
+        where: { team_id: team_id },
+        include: { event: true },
+      });
+      if (!events.length) throw new Error('Events not found');
+      return events;
+    } catch (error) {
+      throw new NotFoundError('Event');
+    }
   }
 
   async update(id: number, event: UpdateEventInput) {
-    if (event.photo) {
-      try {
-        await this.minio.uploadFile(event.photo);
+    try {
+      if (event.photo) {
+        try {
+          await this.minio.uploadFile(event.photo);
 
-        const fileLink = await this.minio.getFileLink(
-          (await event.photo).filename,
-        );
-        return await this.prisma.event.update({
-          where: {
-            id,
-          },
-          data: {
-            ...event,
-            photo: fileLink,
-          },
-        });
-      } catch (error) {
-        throw new BadRequestException('Could not save image');
+          const fileLink = await this.minio.getFileLink(
+            (await event.photo).filename,
+          );
+          return await this.prisma.event.update({
+            where: {
+              id,
+            },
+            data: {
+              ...event,
+              photo: fileLink,
+            },
+          });
+        } catch (error) {
+          throw new Error('Could not save image');
+        }
       }
+      return await this.prisma.event.update({
+        where: { id },
+        data: {
+          name: event.name,
+          date: event.date,
+          place: event.place,
+          description: event.description,
+          link: event.link,
+        },
+      });
+    } catch (error) {
+      throw new Error(error.message);
     }
-    return await this.prisma.event.update({
-      where: { id },
-      data: {
-        name: event.name,
-        date: event.date,
-        place: event.place,
-        description: event.description,
-        link: event.link,
-      },
-    });
   }
 
   async delete(id: number) {
-    return await this.prisma.event.delete({
-      where: { id },
-    });
+    try {
+      return await this.prisma.event.delete({
+        where: { id },
+      });
+    } catch (error) {
+      throw new NotFoundError('Event');
+    }
   }
 
   async addOrganizarator(createAccountEventInput: CreateAccountEventInput) {
-    return await this.prisma.account_event.create({
-      data: {
-        account: { connect: { id: createAccountEventInput.account_id } },
-        event: { connect: { id: createAccountEventInput.event_id } },
-      },
-      include: {
-        event: true,
-        account: true,
-      },
-    });
+    try {
+      return await this.prisma.account_event.create({
+        data: {
+          account: { connect: { id: createAccountEventInput.account_id } },
+          event: { connect: { id: createAccountEventInput.event_id } },
+        },
+        include: {
+          event: true,
+          account: true,
+        },
+      });
+    } catch (error) {
+      throw new Error(error.message);
+    }
   }
 }
