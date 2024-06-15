@@ -4,6 +4,7 @@ import { News } from './entities/news.entity';
 import { CreateNewsInput } from './dto/create-news.input';
 import { UpdateNewsInput } from './dto/update-news.input';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 @Resolver(() => News)
 export class NewsResolver {
@@ -11,32 +12,43 @@ export class NewsResolver {
 
   @Roles('ADMIN', 'DIRECTOR')
   @Mutation(() => News)
-  createNews(@Args('input') createNewsInput: CreateNewsInput) {
-    return this.newsService.create(createNewsInput);
+  async createNews(@Args('input') createNewsInput: CreateNewsInput) {
+    try {
+      return await this.newsService.create(createNewsInput);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   @Query(() => [News])
-  getNews() {
-    return this.newsService.findAll();
-  }
-
-  @Query(() => News)
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.newsService.findOne(id);
+  async getNews() {
+    try {
+      return await this.newsService.findAll();
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
   }
 
   @Roles('ADMIN', 'DIRECTOR')
   @Mutation(() => News)
-  updateNews(
+  async updateNews(
     @Args('id') id: string,
     @Args('input') updateNewsInput: UpdateNewsInput,
   ) {
-    return this.newsService.update(+id, updateNewsInput);
+    try {
+      return await this.newsService.update(+id, updateNewsInput);
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
   }
 
   @Roles('ADMIN', 'DIRECTOR')
   @Mutation(() => News)
-  deleteNews(@Args('id') id: string) {
-    return this.newsService.remove(+id);
+  async deleteNews(@Args('id') id: string) {
+    try {
+      return await this.newsService.remove(+id);
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
   }
 }
