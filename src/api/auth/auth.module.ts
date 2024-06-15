@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtModule } from '@nestjs/jwt';
-import { PrismaService } from 'src/database/prisma.service';
 import { AuthResolver } from './auth.resolver';
+import { PrismaModule } from 'src/database/prisma.module';
 
 @Module({
   imports: [
@@ -11,9 +11,9 @@ import { AuthResolver } from './auth.resolver';
       global: true,
       signOptions: { expiresIn: '1d' },
     }),
+    PrismaModule,
   ],
-  controllers: [],
-  providers: [AuthService, PrismaService, AuthResolver],
+  providers: [AuthService, AuthResolver],
   exports: [AuthService],
 })
 export class AuthModule {}

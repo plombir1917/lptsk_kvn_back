@@ -11,11 +11,12 @@ export const User = createParamDecorator(
     const context = GqlExecutionContext.create(ctx);
     const grphQlContext = context.getContext();
     const req = grphQlContext.req;
+
     const authHeader = req.headers.authorization;
     if (!authHeader) {
       return '';
     }
-    const bearer = authHeader.split(' ')[0];
+
     const token = authHeader.split(' ')[1];
 
     return token;
