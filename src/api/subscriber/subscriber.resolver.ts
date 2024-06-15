@@ -3,33 +3,54 @@ import { SubscriberService } from './subscriber.service';
 import { Subscriber } from './entities/subscriber.entity';
 import { CreateSubscriberInput } from './dto/create-subscriber.input';
 import { UpdateSubscriberInput } from './dto/update-subscriber.input';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { Roles } from '../auth/decorators/roles.decorator';
 
 @Resolver(() => Subscriber)
 export class SubscriberResolver {
   constructor(private readonly subscriberService: SubscriberService) {}
 
   @Mutation(() => Subscriber)
-  createSubscriber(@Args('createSubscriberInput') createSubscriberInput: CreateSubscriberInput) {
-    return this.subscriberService.create(createSubscriberInput);
+  async createSubscriber(
+    @Args('input') createSubscriberInput: CreateSubscriberInput,
+  ) {
+    try {
+      return await this.subscriberService.create(createSubscriberInput);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
+  @Roles('ADMIN', 'DIRECTOR')
   @Query(() => [Subscriber], { name: 'subscriber' })
-  findAll() {
-    return this.subscriberService.findAll();
+  async findAll() {
+    try {
+      return await this.subscriberService.findAll();
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
   }
 
-  @Query(() => Subscriber, { name: 'subscriber' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.subscriberService.findOne(id);
-  }
-
+  @Roles('ADMIN', 'DIRECTOR')
   @Mutation(() => Subscriber)
-  updateSubscriber(@Args('updateSubscriberInput') updateSubscriberInput: UpdateSubscriberInput) {
-    return this.subscriberService.update(updateSubscriberInput.id, updateSubscriberInput);
+  async updateSubscriber(
+    @Args('id') id: string,
+    @Args('input') updateSubscriberInput: UpdateSubscriberInput,
+  ) {
+    try {
+      return await this.subscriberService.update(id, updateSubscriberInput);
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
   }
 
+  @Roles('ADMIN', 'DIRECTOR')
   @Mutation(() => Subscriber)
-  removeSubscriber(@Args('id', { type: () => Int }) id: number) {
-    return this.subscriberService.remove(id);
+  async removeSubscriber(@Args('id') id: string) {
+    try {
+      return await this.subscriberService.remove(id);
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
   }
 }
