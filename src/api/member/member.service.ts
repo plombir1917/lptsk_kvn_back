@@ -14,7 +14,7 @@ export class MemberService {
   ) {}
   async create(createMemberInput: CreateMemberInput) {
     try {
-      await this.minio.uploadFile(createMemberInput.photo);
+      await this.minio.uploadPhoto(createMemberInput.photo);
       const fileLink = await this.minio.getFileLink(
         (await createMemberInput.photo).filename,
       );
@@ -40,7 +40,7 @@ export class MemberService {
   async update(id: string, updateMemberInput: UpdateMemberInput) {
     try {
       if (updateMemberInput.photo) {
-        this.minio.uploadFile(updateMemberInput.photo);
+        this.minio.uploadPhoto(updateMemberInput.photo);
         const fileLink = await this.minio.getFileLink(
           (await updateMemberInput.photo).filename,
         );

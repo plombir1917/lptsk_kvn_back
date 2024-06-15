@@ -21,7 +21,7 @@ export class EventService {
   async create(createEventInput: CreateEventInput) {
     try {
       await createEventInput.photo;
-      await this.minio.uploadFile(createEventInput.photo);
+      await this.minio.uploadPhoto(createEventInput.photo);
       const fileLink = await this.minio.getFileLink(
         (await createEventInput.photo).filename,
       );
@@ -116,7 +116,7 @@ export class EventService {
     try {
       if (event.photo) {
         try {
-          await this.minio.uploadFile(event.photo);
+          await this.minio.uploadPhoto(event.photo);
 
           const fileLink = await this.minio.getFileLink(
             (await event.photo).filename,

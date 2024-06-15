@@ -13,7 +13,7 @@ export class NewsService {
   ) {}
   async create(createNewsInput: CreateNewsInput) {
     try {
-      await this.minio.uploadFile(createNewsInput.photo);
+      await this.minio.uploadPhoto(createNewsInput.photo);
       const fileLink = await this.minio.getFileLink(
         (await createNewsInput.photo).filename,
       );
@@ -39,7 +39,7 @@ export class NewsService {
   async update(id: number, updateNewsInput: UpdateNewsInput) {
     try {
       if (updateNewsInput.photo) {
-        await this.minio.uploadFile(updateNewsInput.photo);
+        await this.minio.uploadPhoto(updateNewsInput.photo);
         const fileLink = await this.minio.getFileLink(
           (await updateNewsInput.photo).filename,
         );

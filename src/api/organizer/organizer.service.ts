@@ -4,10 +4,16 @@ import { CreateOrganizerInput } from './dto/create-organizer.input';
 import { UpdateOrganizerInput } from './dto/update-organizer.input';
 import { Workbook } from 'exceljs';
 import { NotFoundError } from 'src/errors/not-found.error';
+import { MinioService } from 'src/utils/minio/minio.service';
+import { EventService } from '../event/event.service';
 
 @Injectable()
 export class OrganizerService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly minio: MinioService,
+    private readonly eventService: EventService,
+  ) {}
 
   async createOrganizer(createOrganizerInput: CreateOrganizerInput) {
     try {
@@ -41,15 +47,42 @@ export class OrganizerService {
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet('Организаторы');
 
+    // Define columns
     worksheet.columns = [
-      { header: 'account.name', key: 'account', width: 25 },
-      { header: 'event.name', key: 'event', width: 25 },
+      { header: 'Организатор', key: 'organizer', width: 30 },
+      { header: 'Кол-во мероприятий', key: 'eventCount', width: 20 },
+      { header: 'Мероприятие', key: 'event', width: 30 },
     ];
-    const organizers = await this.getOrganizers();
 
-    worksheet.addRows(organizers);
-    console.log(await workbook.xlsx.writeFile('organizers.xlsx'));
-    return workbook.xlsx.writeBuffer();
+    const organizers = await this.prisma.account.findMany({
+      include: {
+        events: true,
+      },
+    });
+
+    // Prepare data for the worksheet
+    const rows = organizers.flatMap((organizer) =>
+      organizer.events.map(async (event) => ({
+        organizer: `${organizer.name} ${organizer.surname}`,
+        eventCount: organizer.events.length,
+        event: (await this.eventService.findOne(event.event_id)).name,
+      })),
+    );
+
+    // Add rows to the worksheet
+    worksheet.addRows(await Promise.all(rows));
+
+    // Save the workbook to a buffer
+    const buffer: Buffer = (await workbook.xlsx.writeBuffer()) as Buffer;
+    const filename = `organizers_${Date.now()}.xlsx`;
+
+    const fileUrl = await this.minio.uploadFile(
+      buffer,
+      filename,
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    );
+
+    return fileUrl;
   }
 
   async getOrganizers() {

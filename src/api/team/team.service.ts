@@ -14,7 +14,7 @@ export class TeamService {
 
   async create(createTeamInput: CreateTeamInput) {
     try {
-      await this.minio.uploadFile(createTeamInput.photo);
+      await this.minio.uploadPhoto(createTeamInput.photo);
 
       const fileLink = await this.minio.getFileLink(
         (await createTeamInput.photo).filename,
@@ -50,7 +50,7 @@ export class TeamService {
   async update(id: number, updateTeamInput: UpdateTeamInput) {
     try {
       if (updateTeamInput.photo) {
-        this.minio.uploadFile(updateTeamInput.photo);
+        this.minio.uploadPhoto(updateTeamInput.photo);
 
         const fileLink = this.minio.getFileLink(
           (await updateTeamInput.photo).filename,

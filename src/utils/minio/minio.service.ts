@@ -24,7 +24,29 @@ export class MinioService {
     }
   }
 
-  async uploadFile(photo: Promise<FileUpload>) {
+  async uploadFile(
+    buffer: Buffer,
+    filename: string,
+    mimetype: string,
+  ): Promise<string> {
+    try {
+      await this.createBucketIfNotExist();
+      await this.minioClient.putObject(
+        this.bucketName,
+        filename,
+        buffer,
+        buffer.length,
+        {
+          'Content-Type': mimetype,
+        },
+      );
+      return this.getFileLink(filename);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async uploadPhoto(photo: Promise<FileUpload>) {
     try {
       const file: FileUpload = await photo;
 

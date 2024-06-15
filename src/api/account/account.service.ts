@@ -27,7 +27,7 @@ export class AccountService {
       await createAccountInput.photo;
       const password = await encodePassword(createAccountInput.password);
 
-      await this.minio.uploadFile(createAccountInput.photo);
+      await this.minio.uploadPhoto(createAccountInput.photo);
 
       const fileLink = await this.minio.getFileLink(
         (await createAccountInput.photo).filename,
@@ -89,7 +89,7 @@ export class AccountService {
 
       //если фото изменяется
       if (updateAccountInput.photo) {
-        await this.minio.uploadFile(updateAccountInput.photo);
+        await this.minio.uploadPhoto(updateAccountInput.photo);
 
         const fileLink = await this.minio.getFileLink(
           (await updateAccountInput.photo).filename,

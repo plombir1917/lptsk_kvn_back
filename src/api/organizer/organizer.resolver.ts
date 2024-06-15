@@ -29,7 +29,7 @@ export class OrganizerResolver {
     }
   }
 
-  @Query(() => Boolean)
+  @Query(() => String)
   async donwloadExcel() {
     return await this.organizerService.downloadExcel();
   }
