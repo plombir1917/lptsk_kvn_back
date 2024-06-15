@@ -128,6 +128,7 @@ model account_event {
   account_id String
   event event @relation(fields: [event_id], references: [id])
   event_id Int
+  responsibility String?
 
   @@id([account_id, event_id])
 }

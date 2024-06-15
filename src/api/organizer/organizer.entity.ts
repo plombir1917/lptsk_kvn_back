@@ -10,6 +10,9 @@ export class Organizer {
   @Field(() => Int)
   event_id: number;
 
+  @Field(() => String)
+  responsibility: string;
+
   @Field(() => Account)
   account: Account;
 

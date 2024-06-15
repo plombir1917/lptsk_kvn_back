@@ -6,6 +6,7 @@ import { Workbook } from 'exceljs';
 import { NotFoundError } from 'src/errors/not-found.error';
 import { MinioService } from 'src/utils/minio/minio.service';
 import { EventService } from '../event/event.service';
+import { AlreadyExistError } from 'src/errors/already-exist.error';
 
 @Injectable()
 export class OrganizerService {
@@ -21,10 +22,11 @@ export class OrganizerService {
         data: {
           account: { connect: { id: createOrganizerInput.account_id } },
           event: { connect: { id: createOrganizerInput.event_id } },
+          responsibility: createOrganizerInput.responsibility,
         },
       });
     } catch (error) {
-      throw new Error(error.message);
+      throw new AlreadyExistError('Organizer');
     }
   }
 
@@ -50,8 +52,10 @@ export class OrganizerService {
     // Define columns
     worksheet.columns = [
       { header: 'Организатор', key: 'organizer', width: 30 },
-      { header: 'Кол-во мероприятий', key: 'eventCount', width: 20 },
+      { header: 'Ответственность', key: 'responsibility', width: 30 },
       { header: 'Мероприятие', key: 'event', width: 30 },
+      { header: 'Создано', key: 'created_at', width: 30 },
+      { header: 'Проведено', key: 'date', width: 30 },
     ];
 
     const organizers = await this.prisma.account.findMany({
@@ -64,8 +68,11 @@ export class OrganizerService {
     const rows = organizers.flatMap((organizer) =>
       organizer.events.map(async (event) => ({
         organizer: `${organizer.name} ${organizer.surname}`,
-        eventCount: organizer.events.length,
+        responsibility: event.responsibility,
         event: (await this.eventService.findOne(event.event_id)).name,
+        created_at: (await this.eventService.findOne(event.event_id))
+          .created_at,
+        date: (await this.eventService.findOne(event.event_id)).date,
       })),
     );
 

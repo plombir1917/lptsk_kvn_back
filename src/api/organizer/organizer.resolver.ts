@@ -30,7 +30,7 @@ export class OrganizerResolver {
   }
 
   @Query(() => String)
-  async donwloadExcel() {
+  async downloadExcel() {
     return await this.organizerService.downloadExcel();
   }
 
