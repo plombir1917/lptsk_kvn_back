@@ -14,6 +14,7 @@ import { UpdateTicketInput } from './dto/update-ticket.input';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { EventService } from '../event/event.service';
 import { Event } from '../event/entities/event.entity';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 @Resolver(() => Ticket)
 export class TicketResolver {
@@ -24,33 +25,44 @@ export class TicketResolver {
 
   @Roles('ADMIN', 'DIRECTOR')
   @Mutation(() => Ticket)
-  createTicket(@Args('input') createTicketInput: CreateTicketInput) {
-    return this.ticketService.create(createTicketInput);
+  async createTicket(@Args('input') createTicketInput: CreateTicketInput) {
+    try {
+      return await this.ticketService.create(createTicketInput);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   @Query(() => [Ticket])
-  getTickets() {
-    return this.ticketService.findAll();
-  }
-
-  @Query(() => Ticket, { name: 'ticket' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.ticketService.findOne(id);
+  async getTickets() {
+    try {
+      return this.ticketService.findAll();
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
   }
 
   @Roles('ADMIN', 'DIRECTOR')
   @Mutation(() => Ticket)
-  updateTicket(
+  async updateTicket(
     @Args('id') id: number,
     @Args('updateTicketInput') updateTicketInput: UpdateTicketInput,
   ) {
-    return this.ticketService.update(id, updateTicketInput);
+    try {
+      return await this.ticketService.update(id, updateTicketInput);
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
   }
 
   @Roles('ADMIN', 'DIRECTOR')
   @Mutation(() => Ticket)
-  deleteTicket(@Args('id', { type: () => Int }) id: number) {
-    return this.ticketService.remove(id);
+  async deleteTicket(@Args('id', { type: () => Int }) id: number) {
+    try {
+      return await this.ticketService.remove(id);
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
   }
 
   @ResolveField(() => Event)

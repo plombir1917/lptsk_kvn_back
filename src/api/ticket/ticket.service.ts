@@ -2,39 +2,61 @@ import { Injectable } from '@nestjs/common';
 import { CreateTicketInput } from './dto/create-ticket.input';
 import { UpdateTicketInput } from './dto/update-ticket.input';
 import { PrismaService } from 'src/database/prisma.service';
+import { AlreadyExistError } from 'src/errors/already-exist.error';
+import { NotFoundError } from 'src/errors/not-found.error';
 
 @Injectable()
 export class TicketService {
   constructor(private readonly prisma: PrismaService) {}
+
   async create(createTicketInput: CreateTicketInput) {
-    return await this.prisma.ticket.create({
-      data: createTicketInput,
-    });
+    try {
+      return await this.prisma.ticket.create({
+        data: createTicketInput,
+      });
+    } catch (error) {
+      throw new AlreadyExistError('Ticket');
+    }
   }
 
   async findAll() {
-    return await this.prisma.ticket.findMany();
+    try {
+      const tickets = await this.prisma.ticket.findMany();
+      if (!tickets.length) throw new Error();
+      return tickets;
+    } catch (error) {
+      throw new NotFoundError('Ticket');
+    }
   }
+
   async getTicketsByEvent(event_id: number) {
-    return await this.prisma.ticket.findFirstOrThrow({
-      where: {
-        event_id: event_id,
-      },
-    });
+    try {
+      return await this.prisma.ticket.findFirstOrThrow({
+        where: {
+          event_id: event_id,
+        },
+      });
+    } catch (error) {
+      throw new NotFoundError('Ticket');
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} ticket`;
+  async update(id: number, updateTicketInput: UpdateTicketInput) {
+    try {
+      return await this.prisma.ticket.update({
+        where: { id },
+        data: updateTicketInput,
+      });
+    } catch (error) {
+      throw new NotFoundError('Ticket');
+    }
   }
 
-  update(id: number, updateTicketInput: UpdateTicketInput) {
-    return this.prisma.ticket.update({
-      where: { id },
-      data: updateTicketInput,
-    });
-  }
-
-  remove(id: number) {
-    return this.prisma.ticket.delete({ where: { id } });
+  async remove(id: number) {
+    try {
+      return await this.prisma.ticket.delete({ where: { id } });
+    } catch (error) {
+      throw new NotFoundError('Ticket');
+    }
   }
 }
