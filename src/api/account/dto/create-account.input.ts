@@ -1,6 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { $Enums } from '@prisma/client';
 import {
+  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsPhoneNumber,
@@ -8,8 +9,7 @@ import {
   IsStrongPassword,
 } from 'class-validator';
 import * as GraphQLUpload from 'graphql-upload/GraphQLUpload.js';
-import { FileUpload } from 'src/upload/file-upload.interface';
-
+import { FileUpload } from 'graphql-upload/GraphQLUpload.js';
 @InputType()
 export class CreateAccountInput {
   @Field()
@@ -40,6 +40,6 @@ export class CreateAccountInput {
   photo: Promise<FileUpload>;
 
   @Field()
-  @IsString()
+  @IsEnum($Enums.roles)
   role: $Enums.roles;
 }

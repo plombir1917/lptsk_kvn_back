@@ -4,16 +4,13 @@ import { CreateAccountInput } from './dto/create-account.input';
 import { AccountService } from './account.service';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { User } from '../auth/decorators/user.decorator';
-import { AuthService } from '../auth/auth.service';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UpdateAccountInput } from './dto/update-account.input';
+import { ChangePasswordInput } from './dto/change-password.input';
 
 @Resolver('Account')
 export class AccountResolver {
-  constructor(
-    private readonly accountService: AccountService,
-    private readonly authService: AuthService,
-  ) {}
+  constructor(private readonly accountService: AccountService) {}
 
   @Roles('DIRECTOR')
   @Mutation(() => Account)
@@ -31,7 +28,7 @@ export class AccountResolver {
     try {
       return await this.accountService.getAccountById(id);
     } catch (error) {
-      throw new NotFoundException('Account not found!');
+      throw new NotFoundException(error.message);
     }
   }
 
@@ -39,31 +36,52 @@ export class AccountResolver {
   @Query(() => Account)
   async getAccountByToken(@User() token: string) {
     try {
-      const payload = await this.authService.decodeToken(token);
-      return await this.accountService.getAccountById(payload.id);
+      return await this.accountService.getAccountById(token);
     } catch (error) {
-      throw new NotFoundException('Account not found!');
+      throw new NotFoundException(error.message);
     }
   }
 
   @Roles('DIRECTOR')
   @Query(() => [Account])
   async getAccounts() {
-    return await this.accountService.getAccounts();
+    try {
+      return await this.accountService.getAccounts();
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
   }
 
-  // @Roles('DIRECTOR')
+  @Roles('DIRECTOR', 'EDITOR', 'ADMIN')
   @Mutation(() => Account)
   async updateAccount(
     @Args('id') id: string,
     @Args('input') input: UpdateAccountInput,
   ) {
-    return await this.accountService.updateAccount(id, input);
+    try {
+      return await this.accountService.updateAccount(id, input);
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
   }
 
   @Roles('DIRECTOR')
   @Mutation(() => Account)
   async deleteAccount(@Args('id') id: string) {
-    return await this.accountService.deleteAccount(id);
+    try {
+      return await this.accountService.deleteAccount(id);
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
+  }
+
+  @Roles('DIRECTOR', 'EDITOR', 'ADMIN')
+  @Mutation(() => Account)
+  async changePassword(@Args('input') input: ChangePasswordInput) {
+    try {
+      return await this.accountService.changePassword(input);
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
   }
 }
