@@ -3,7 +3,6 @@ import {
   Query,
   Mutation,
   Args,
-  Int,
   ResolveField,
   Parent,
 } from '@nestjs/graphql';
@@ -14,6 +13,7 @@ import { UpdateMemberInput } from './dto/update-member.input';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { TeamService } from '../team/team.service';
 import { Team } from '../team/entities/team.entity';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 @Resolver(() => Member)
 export class MemberResolver {
@@ -24,38 +24,53 @@ export class MemberResolver {
 
   @Roles('EDITOR', 'DIRECTOR')
   @Mutation(() => Member)
-  createMember(@Args('input') createMemberInput: CreateMemberInput) {
-    return this.memberService.create(createMemberInput);
-  }
-  @Roles('EDITOR', 'DIRECTOR')
-  @Query(() => [Member])
-  getMembers() {
-    return this.memberService.findAll();
+  async createMember(@Args('input') createMemberInput: CreateMemberInput) {
+    try {
+      return await this.memberService.create(createMemberInput);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   @Roles('EDITOR', 'DIRECTOR')
-  @Query(() => Member)
-  findOne(@Args('id') id: string) {
-    return this.memberService.findOne(id);
+  @Query(() => [Member])
+  async getMembers() {
+    try {
+      return await this.memberService.findAll();
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
   }
 
   @Roles('EDITOR', 'DIRECTOR')
   @Mutation(() => Member)
-  updateMember(
+  async updateMember(
     @Args('id') id: string,
     @Args('input') updateMemberInput: UpdateMemberInput,
   ) {
-    return this.memberService.update(id, updateMemberInput);
+    try {
+      return await this.memberService.update(id, updateMemberInput);
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
   }
 
   @Roles('EDITOR', 'DIRECTOR')
   @Mutation(() => Member)
-  deleteMember(@Args('id') id: string) {
-    return this.memberService.remove(id);
+  async deleteMember(@Args('id') id: string) {
+    try {
+      return await this.memberService.remove(id);
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
   }
 
   @ResolveField(() => Team)
-  team(@Parent() member: Member) {
-    return this.teamService.findOne(+member.team_id);
+  async team(@Parent() member: Member) {
+    try {
+      return await this.teamService.findOne(+member.team_id);
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
   }
 }
