@@ -1,5 +1,4 @@
 import * as bcrypt from 'bcrypt';
-import { WrongPasswordError } from 'src/errors/wrong-password.error';
 
 export async function encodePassword(rawPassword: string) {
   const SALT = await bcrypt.genSalt();
@@ -11,6 +10,6 @@ export async function comparePassword(
   encodedPassword: string,
 ) {
   if (!(await bcrypt.compare(rawPassword, encodedPassword)))
-    throw new WrongPasswordError();
+    throw new Error('Wrong password!');
   return true;
 }
