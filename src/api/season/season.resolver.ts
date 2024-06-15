@@ -4,6 +4,7 @@ import { Season } from './entities/season.entity';
 import { CreateSeasonInput } from './dto/create-season.input';
 import { UpdateSeasonInput } from './dto/update-season.input';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 @Resolver(() => Season)
 export class SeasonResolver {
@@ -11,30 +12,44 @@ export class SeasonResolver {
 
   @Roles('EDITOR', 'DIRECTOR')
   @Mutation(() => Season)
-  createSeason(@Args('input') createSeasonInput: CreateSeasonInput) {
-    return this.seasonService.create(createSeasonInput);
+  async createSeason(@Args('input') createSeasonInput: CreateSeasonInput) {
+    try {
+      return await this.seasonService.create(createSeasonInput);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
+  @Roles('EDITOR', 'DIRECTOR')
   @Query(() => [Season])
-  getSeasons() {
-    return this.seasonService.findAll();
+  async getSeasons() {
+    try {
+      return await this.seasonService.findAll();
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
   }
 
-  @Query(() => Season)
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.seasonService.findOne(id);
-  }
-
+  @Roles('EDITOR', 'DIRECTOR')
   @Mutation(() => Season)
-  updateSeason(
+  async updateSeason(
     @Args('id') id: string,
     @Args('input') updateSeasonInput: UpdateSeasonInput,
   ) {
-    return this.seasonService.update(+id, updateSeasonInput);
+    try {
+      return await this.seasonService.update(+id, updateSeasonInput);
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
   }
 
+  @Roles('EDITOR', 'DIRECTOR')
   @Mutation(() => Season)
   deleteSeason(@Args('id') id: number) {
-    return this.seasonService.remove(id);
+    try {
+      return this.seasonService.remove(id);
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
   }
 }

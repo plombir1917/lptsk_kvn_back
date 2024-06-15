@@ -2,30 +2,44 @@ import { Injectable } from '@nestjs/common';
 import { CreateSeasonInput } from './dto/create-season.input';
 import { UpdateSeasonInput } from './dto/update-season.input';
 import { PrismaService } from 'src/database/prisma.service';
+import { AlreadyExistError } from 'src/errors/already-exist.error';
+import { NotFoundError } from 'src/errors/not-found.error';
 
 @Injectable()
 export class SeasonService {
   constructor(private readonly prisma: PrismaService) {}
   async create(createSeasonInput: CreateSeasonInput) {
-    return await this.prisma.season.create({ data: createSeasonInput });
+    try {
+      return await this.prisma.season.create({ data: createSeasonInput });
+    } catch (error) {
+      throw new AlreadyExistError('Season');
+    }
   }
 
   async findAll() {
-    return await this.prisma.season.findMany();
-  }
-
-  async findOne(id: number) {
-    return await this.prisma.season.findUnique({ where: { id } });
+    try {
+      return await this.prisma.season.findMany();
+    } catch (error) {
+      throw new NotFoundError('Season');
+    }
   }
 
   async update(id: number, updateSeasonInput: UpdateSeasonInput) {
-    return await this.prisma.season.update({
-      where: { id },
-      data: updateSeasonInput,
-    });
+    try {
+      return await this.prisma.season.update({
+        where: { id },
+        data: updateSeasonInput,
+      });
+    } catch (error) {
+      throw new NotFoundError('Season');
+    }
   }
 
   async remove(id: number) {
-    return await this.prisma.season.delete({ where: { id } });
+    try {
+      return await this.prisma.season.delete({ where: { id } });
+    } catch (error) {
+      throw new NotFoundError('Season');
+    }
   }
 }
