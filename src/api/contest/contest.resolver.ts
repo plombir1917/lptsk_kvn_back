@@ -4,6 +4,7 @@ import { Contest } from './entities/contest.entity';
 import { CreateContestInput } from './dto/create-contest.input';
 import { UpdateContestInput } from './dto/update-contest.input';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 @Resolver(() => Contest)
 export class ContestResolver {
@@ -11,34 +12,44 @@ export class ContestResolver {
 
   @Roles('EDITOR', 'DIRECTOR')
   @Mutation(() => Contest)
-  createContest(@Args('input') createContestInput: CreateContestInput) {
-    return this.contestService.create(createContestInput);
+  async createContest(@Args('input') createContestInput: CreateContestInput) {
+    try {
+      return await this.contestService.create(createContestInput);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   @Roles('EDITOR', 'DIRECTOR')
   @Query(() => [Contest])
-  getContests() {
-    return this.contestService.findAll();
-  }
-
-  @Roles('EDITOR', 'DIRECTOR')
-  @Query(() => Contest)
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.contestService.findOne(id);
+  async getContests() {
+    try {
+      return await this.contestService.findAll();
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
   }
 
   @Roles('EDITOR', 'DIRECTOR')
   @Mutation(() => Contest)
-  updateContest(
+  async updateContest(
     @Args('id') id: number,
     @Args('input') updateContestInput: UpdateContestInput,
   ) {
-    return this.contestService.update(id, updateContestInput);
+    try {
+      return await this.contestService.update(id, updateContestInput);
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
   }
 
   @Roles('EDITOR', 'DIRECTOR')
   @Mutation(() => Contest)
-  deleteContest(@Args('id') id: string) {
-    return this.contestService.remove(+id);
+  async deleteContest(@Args('id') id: string) {
+    try {
+      return await this.contestService.remove(+id);
+    } catch (error) {
+      throw new NotFoundException(error.message);
+    }
   }
 }
