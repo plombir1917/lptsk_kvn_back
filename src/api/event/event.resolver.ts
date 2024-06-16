@@ -26,7 +26,7 @@ export class EventResolver {
     private readonly ticketService: TicketService,
   ) {}
 
-  @Roles('EDITOR', 'DIRECTOR')
+  @Roles('ADMIN', 'DIRECTOR')
   @Mutation(() => Event)
   async createEvent(@Args('input') createEventInput: CreateEventInput) {
     try {
@@ -36,7 +36,7 @@ export class EventResolver {
     }
   }
 
-  @Roles('EDITOR', 'DIRECTOR')
+  @Roles('ADMIN', 'DIRECTOR')
   @Mutation(() => Activity)
   async addActivity(@Args('input') createActivityInput: CreateActivityInput) {
     try {
@@ -55,7 +55,7 @@ export class EventResolver {
     }
   }
 
-  @Roles('EDITOR', 'DIRECTOR')
+  @Roles('ADMIN', 'DIRECTOR')
   @Query(() => Event)
   async findOne(@Args('id', { type: () => Int }) id: number) {
     try {
@@ -65,7 +65,7 @@ export class EventResolver {
     }
   }
 
-  @Roles('EDITOR', 'DIRECTOR')
+  @Roles('ADMIN', 'DIRECTOR')
   @Mutation(() => Event)
   async updateEvent(
     @Args('id') id: string,
@@ -78,7 +78,7 @@ export class EventResolver {
     }
   }
 
-  @Roles('EDITOR', 'DIRECTOR')
+  @Roles('ADMIN', 'DIRECTOR')
   @Mutation(() => Event)
   async deleteEvent(@Args('id') id: string) {
     try {
@@ -100,7 +100,7 @@ export class EventResolver {
     }
   }
 
-  @Roles('DIRECTOR', 'EDITOR')
+  @Roles('ADMIN', 'EDITOR')
   @Mutation(() => Activity)
   async deleteActivity(
     @Args('input') deleteActivityInput: CreateActivityInput,

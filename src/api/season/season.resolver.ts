@@ -10,7 +10,7 @@ import { BadRequestException, NotFoundException } from '@nestjs/common';
 export class SeasonResolver {
   constructor(private readonly seasonService: SeasonService) {}
 
-  @Roles('EDITOR', 'DIRECTOR')
+  @Roles('ADMIN', 'DIRECTOR')
   @Mutation(() => Season)
   async createSeason(@Args('input') createSeasonInput: CreateSeasonInput) {
     try {
@@ -20,7 +20,7 @@ export class SeasonResolver {
     }
   }
 
-  @Roles('EDITOR', 'DIRECTOR')
+  @Roles('ADMIN', 'DIRECTOR')
   @Query(() => [Season])
   async getSeasons() {
     try {
@@ -30,7 +30,7 @@ export class SeasonResolver {
     }
   }
 
-  @Roles('EDITOR', 'DIRECTOR')
+  @Roles('ADMIN', 'DIRECTOR')
   @Mutation(() => Season)
   async updateSeason(
     @Args('id') id: string,
@@ -43,7 +43,7 @@ export class SeasonResolver {
     }
   }
 
-  @Roles('EDITOR', 'DIRECTOR')
+  @Roles('ADMIN', 'DIRECTOR')
   @Mutation(() => Season)
   deleteSeason(@Args('id') id: number) {
     try {
