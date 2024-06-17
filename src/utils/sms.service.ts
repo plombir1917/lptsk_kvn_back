@@ -12,7 +12,7 @@ export class SmsService {
           Authorization: `Bearer ${process.env.MTS_API_KEY}`,
         },
         body: JSON.stringify({
-          number: 'KVN',
+          number: process.env.MTS_NUMBER,
           destination: to,
           text: text,
         }),
