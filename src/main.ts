@@ -9,7 +9,7 @@ import * as bodyParser from 'body-parser';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
   app.enableCors({
-    origin: true,
+    origin: 'https://lptsk-kvn-back.onrender.com',
     preflightContinue: true,
     allowedHeaders: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
