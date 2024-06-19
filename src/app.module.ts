@@ -13,6 +13,7 @@ import { GraphQLError, GraphQLFormattedError } from 'graphql';
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
+      playground: true,
       autoSchemaFile: true,
       csrfPrevention: false,
       formatError: (error: GraphQLError) => {
