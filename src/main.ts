@@ -9,9 +9,10 @@ import * as bodyParser from 'body-parser';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
   app.enableCors({
-    origin: 'https://lptsk-kvn-back.onrender.com/graphql',
+    origin: 'https://lptsk-kvn.netlify.app/',
     preflightContinue: true,
     allowedHeaders: '*',
+    credentials: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   });
   app.useGlobalPipes(new ValidationPipe());
