@@ -7,13 +7,9 @@ import * as graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.js';
 import * as bodyParser from 'body-parser';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: true });
+  const app = await NestFactory.create(AppModule);
   app.enableCors({
     origin: true,
-    preflightContinue: true,
-    allowedHeaders: '*',
-    credentials: true,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   });
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalGuards(new RolesGuard(app.get(JwtService), app.get(Reflector)));
