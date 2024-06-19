@@ -32,6 +32,7 @@ export class AccountService {
       const fileLink = await this.minio.getFileLink(
         (await createAccountInput.photo).filename,
       );
+      console.log(fileLink);
 
       await this.sms.sendSms(
         createAccountInput.phone,
@@ -94,6 +95,7 @@ export class AccountService {
         const fileLink = await this.minio.getFileLink(
           (await updateAccountInput.photo).filename,
         );
+        console.log(fileLink);
 
         return await this.prisma.account.update({
           where: {
