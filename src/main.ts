@@ -12,7 +12,7 @@ async function bootstrap() {
   app.useGlobalGuards(new RolesGuard(app.get(JwtService), app.get(Reflector)));
   app.use(bodyParser.json({ limit: '50mb' }));
   app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
-  app.enableCors();
+  app.enableCors({ allowedHeaders: '*', preflightContinue: true });
   app.use(graphqlUploadExpress({ maxFileSize: 100000000, maxFiles: 10 }));
   await app.listen(process.env.APPLICATION_PORT);
 }
