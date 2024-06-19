@@ -9,7 +9,7 @@ import * as bodyParser from 'body-parser';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
   app.enableCors({
-    origin: 'https://lptsk-kvn.netlify.app/',
+    origin: true,
     preflightContinue: true,
     allowedHeaders: '*',
     credentials: true,
