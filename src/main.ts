@@ -9,7 +9,7 @@ import * as bodyParser from 'body-parser';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
   app.enableCors({
-    origin: 'https://lptsk-kvn-back.onrender.com',
+    origin: 'https://lptsk-kvn-back.onrender.com/graphql',
     preflightContinue: true,
     allowedHeaders: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
@@ -18,7 +18,9 @@ async function bootstrap() {
   app.useGlobalGuards(new RolesGuard(app.get(JwtService), app.get(Reflector)));
   app.use(bodyParser.json({ limit: '50mb' }));
   app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
-  app.use(graphqlUploadExpress({ maxFileSize: 100000000, maxFiles: 10 }));
+  app.use(
+    graphqlUploadExpress('/graphql', { maxFileSize: 100000000, maxFiles: 10 }),
+  );
 
   await app.listen(process.env.APPLICATION_PORT);
 }
