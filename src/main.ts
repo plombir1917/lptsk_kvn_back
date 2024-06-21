@@ -5,12 +5,13 @@ import { RolesGuard } from './api/auth/guards/roles.guard';
 import { JwtService } from '@nestjs/jwt';
 import * as graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.js';
 import * as bodyParser from 'body-parser';
+import { ContentTypeMiddleware } from './middlewares/content-type.middleware';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors({
-    origin: true,
-  });
+  app.use(new ContentTypeMiddleware().use);
+  app.enableCors({ origin: true });
+
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalGuards(new RolesGuard(app.get(JwtService), app.get(Reflector)));
   app.use(bodyParser.json({ limit: '50mb' }));
