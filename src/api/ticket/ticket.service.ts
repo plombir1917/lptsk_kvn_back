@@ -20,13 +20,9 @@ export class TicketService {
   }
 
   async findAll() {
-    try {
-      const tickets = await this.prisma.ticket.findMany();
-      if (!tickets.length) throw new Error();
-      return tickets;
-    } catch (error) {
-      throw new NotFoundError('Ticket');
-    }
+    const tickets = await this.prisma.ticket.findMany();
+    if (!tickets.length) throw new NotFoundError('Ticket');
+    return tickets;
   }
 
   async getTicketsByEvent(event_id: number) {

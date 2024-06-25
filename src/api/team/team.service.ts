@@ -32,11 +32,9 @@ export class TeamService {
   }
 
   async findAll() {
-    try {
-      return await this.prisma.team.findMany();
-    } catch (error) {
-      throw new NotFoundError('Team');
-    }
+    const teams = await this.prisma.team.findMany();
+    if (!teams.length) throw new NotFoundError('Team');
+    return teams;
   }
 
   async findOne(id: number) {
@@ -82,7 +80,7 @@ export class TeamService {
 
   async remove(id: number) {
     try {
-      return this.prisma.team.delete({ where: { id } });
+      return await this.prisma.team.delete({ where: { id } });
     } catch (error) {
       throw new NotFoundError('Team');
     }
