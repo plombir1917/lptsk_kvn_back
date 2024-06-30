@@ -66,7 +66,7 @@ export class TicketResolver {
   }
 
   @ResolveField(() => Event)
-  event(@Parent() ticket: Ticket) {
-    return this.eventService.findOne(ticket.event_id);
+  async event(@Parent() ticket: Ticket) {
+    return await this.eventService.findOne(ticket.event_id);
   }
 }

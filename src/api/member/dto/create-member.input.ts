@@ -23,5 +23,4 @@ export class CreateMemberInput {
   @IsNumber()
   @IsNotEmpty()
   team_id: number;
-  s;
 }
