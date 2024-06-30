@@ -49,7 +49,6 @@ export class OrganizerService {
     const workbook = new Workbook();
     const worksheet = workbook.addWorksheet('Организаторы');
 
-    // Define columns
     worksheet.columns = [
       { header: 'Организатор', key: 'organizer', width: 30 },
       { header: 'Ответственность', key: 'responsibility', width: 30 },
@@ -64,7 +63,6 @@ export class OrganizerService {
       },
     });
 
-    // Prepare data for the worksheet
     const rows = organizers.flatMap((organizer) =>
       organizer.events.map(async (event) => ({
         organizer: `${organizer.name} ${organizer.surname}`,
@@ -76,10 +74,8 @@ export class OrganizerService {
       })),
     );
 
-    // Add rows to the worksheet
     worksheet.addRows(await Promise.all(rows));
 
-    // Save the workbook to a buffer
     const buffer: Buffer = (await workbook.xlsx.writeBuffer()) as Buffer;
     const filename = `organizers_${Date.now()}.xlsx`;
 
