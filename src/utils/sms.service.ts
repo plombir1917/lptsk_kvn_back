@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class SmsService {
   async sendSms(to: string, text: string) {
-    console.log(to, text);
+    console.log(to.slice(1), text);
     try {
       const response = await fetch(process.env.MTS_API, {
         method: 'POST',
@@ -13,11 +13,10 @@ export class SmsService {
         },
         body: JSON.stringify({
           number: process.env.MTS_NUMBER,
-          destination: to,
+          destination: to.slice(1),
           text: text,
         }),
       });
-      console.log(response);
       return response;
     } catch (error) {
       throw error;
