@@ -1,73 +1,102 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# LPTK KVN Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Современный бэкенд-сервис для системы управления КВН, построенный на NestJS с использованием GraphQL и Prisma.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 🚀 Особенности
 
-## Description
+- **GraphQL API** - Современный и гибкий API с использованием Apollo Server
+- **TypeScript** - Строгая типизация для надежного кода
+- **Prisma ORM** - Мощный ORM для работы с базой данных
+- **JWT Authentication** - Безопасная аутентификация
+- **MinIO Integration** - Хранение файлов
+- **Excel Export** - Экспорт данных в Excel
+- **Winston Logger** - Продвинутое логирование
+- **Docker Support** - Легкое развертывание
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 📋 Требования
 
-## Installation
+- Node.js (v16 или выше)
+- PostgreSQL
+- MinIO (для хранения файлов)
+
+## 🛠 Установка
+
+1. Клонируйте репозиторий:
 
 ```bash
-$ npm install
+git clone [url-репозитория]
+cd lptsk_kvn
 ```
 
-## Running the app
+2. Установите зависимости:
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm install
 ```
 
-## Test
+3. Настройте переменные окружения:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+cp .env.example .env
+# Отредактируйте .env файл с вашими настройками
 ```
 
-## Support
+4. Примените миграции базы данных:
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```bash
+npm run migrate
+```
 
-## Stay in touch
+5. Сгенерируйте Prisma клиент:
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```bash
+npm run generate
+```
 
-## License
+## 🚀 Запуск
 
-Nest is [MIT licensed](LICENSE).
+### Разработка
+
+```bash
+npm run start:dev
+```
+
+### Продакшн
+
+```bash
+npm run build
+npm run start:prod
+```
+
+## 📚 Доступные скрипты
+
+- `npm run build` - Сборка проекта
+- `npm run start:dev` - Запуск в режиме разработки
+- `npm run start:prod` - Запуск в продакшн режиме
+- `npm run lint` - Проверка кода линтером
+- `npm run test` - Запуск тестов
+- `npm run test:e2e` - Запуск end-to-end тестов
+- `npm run migrate` - Применение миграций базы данных
+- `npm run generate` - Генерация Prisma клиента
+
+## 🏗 Архитектура
+
+Проект следует модульной архитектуре NestJS:
+
+- `src/api/` - GraphQL резолверы и сервисы
+- `src/database/` - Конфигурация Prisma и миграции
+- `src/errors/` - Обработка ошибок
+- `src/utils/` - Вспомогательные утилиты
+
+## 🔒 Безопасность
+
+- JWT аутентификация
+- Валидация входных данных
+- Безопасное хранение файлов
+- Защита от SQL-инъекций через Prisma
+
+## 📈 Мониторинг и логирование
+
+- Winston для структурированного логирования
+- Интеграция с системами мониторинга
+- Отслеживание ошибок и исключений
